@@ -143,5 +143,5 @@ for F in F_eval:
     TP_list.append(TP)
 
 plt.plot(F_eval, TP_list)
-# plt.ylim(-0.1, 1.1)
+plt.ylim(-0.1, 1.1)
 plt.show()
