@@ -68,33 +68,36 @@ def Hc(t, component):
     return H[component]
 
 
-def E_plus(t):
+def phi_dot(t):
     """
-    adiabatic energy (eigenvalue)
+    define derivative of phi
 
     Args:
         t (float): time
 
     Returns:
-        float: adiabatic enegy
-    """
-    E_plus = cmath.sqrt(Hc(t, "x")**2 + Hc(t, "y")**2 + Hc(t, "z")**2)
-    return E_plus
-
-
-def phi_dot_approx(t):
-    """
-    approximate form of phi dot
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: phi dot (approximated)
+        float: derivative of phi
     """
     num = -Hc(t, "x")*Hc(t, "y_dot") + Hc(t, "x_dot")*Hc(t, "y")
     den = Hc(t, "x")**2 + Hc(t, "y")**2
     return num / den
+
+
+def E_plus_unitary_transformed(t):
+    """
+    adiabatic energy (unitary transformed)
+
+    Args:
+        t (float): time
+
+    Returns:
+        float: adiabatic enegy (unitary transformed)
+    """
+    X = Hc(t, "x")
+    Y = Hc(t, "y")
+    Z = Hc(t, "z")
+    phi_d = phi_dot(t)
+    return cmath.sqrt(X**2 + Y**2 + (Z + 0.5*(-F)*phi_d)**2)
 
 
 def Re_E(t):
@@ -107,12 +110,7 @@ def Re_E(t):
     Returns:
         float: adiabatic energy
     """
-    X = Hc(tt + 1j*t, "x")
-    Y = Hc(tt + 1j*t, "y")
-    Z = Hc(tt + 1j*t, "z")
-    phi_dot = phi_dot_approx(tt + 1j*t)
-    a = X**2 + Y**2 + (Z + 0.5*(-F)*phi_dot)**2
-    Integrand = (cmath.sqrt(a))
+    Integrand = E_plus_unitary_transformed(tt + 1j*t)
     return -4 * (-F) / abs(F) * Integrand.real
 
 
