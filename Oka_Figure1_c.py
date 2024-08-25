@@ -25,6 +25,11 @@ t_eval = np.linspace(-t_f, t_f, n)  # time
 F_values = np.linspace(-2, 2, n)  # sweep speed
 
 
+def TLZ_theoretical(F):
+    TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
+    return np.exp(TLZ)
+
+
 def q(t):
     """
     define parameter sweep q
@@ -140,7 +145,8 @@ for F in F_values:
     TP = abs(dot)**2  # transition probability
     TP_list.append(TP)
 
-plt.plot(F_values, TP_list)
+plt.plot(F_values, TP_list, label="numerical")
+plt.plot(F_values, TLZ_theoretical(F_values),
+         linestyle=":", label="theoretical")
+plt.legend()
 plt.show()
-
-# %%

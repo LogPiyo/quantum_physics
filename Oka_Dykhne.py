@@ -27,7 +27,12 @@ t_f = math.pi  # final time
 h = 1  # Dirac constant
 TP_list = []  # transition probability
 n = 100  # step
-F_eval = np.linspace(-2, 2, n)  # time
+F_values = np.linspace(-2, 2, n)  # time
+
+
+def TLZ_theoretical(F):
+    TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
+    return np.exp(TLZ)
 
 
 def q(t):
@@ -114,7 +119,7 @@ def Re_E(t):
     return -4 * (-F) / abs(F) * Integrand.real
 
 
-for F in F_eval:
+for F in F_values:
     tt = 0  # transition time
     zero_approx = (m + k*v*abs(F)/4) / (v * (-F))
     # zero of adiabatic energy (approximated)
@@ -127,6 +132,9 @@ for F in F_eval:
     TP = math.exp(log_TP)
     TP_list.append(TP)
 
-plt.plot(F_eval, TP_list)
+plt.plot(F_values, TP_list, label="numerical")
+plt.plot(F_values, TLZ_theoretical(F_values),
+         linestyle=":", label="theoretical")
+plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
