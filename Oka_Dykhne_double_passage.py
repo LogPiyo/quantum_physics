@@ -87,23 +87,23 @@ def E_plus(t):
         t (float): time
 
     Returns:
-        float: adiabatic enegy
+        float: adiabatic energy
     """
     E_plus = cmath.sqrt(Hc(t, "x")**2 + Hc(t, "y")**2 + Hc(t, "z")**2)
     return E_plus
 
 
-def phi_dot_approx(t):
+def phi_dot(t):
     """
-    approximate form of phi dot
+    define derivative of phi
 
     Args:
         t (float): time
 
     Returns:
-        float: phi dot (approximated)
+        float: derivative of phi
     """
-    num = Hc(t, "x")*Hc(t, "y_dot") - Hc(t, "x_dot")*Hc(t, "y")
+    num = -Hc(t, "x")*Hc(t, "y_dot") + Hc(t, "x_dot")*Hc(t, "y")
     den = Hc(t, "x")**2 + Hc(t, "y")**2
     return num / den
 #     return -k * v / 2
@@ -122,8 +122,8 @@ def Re_E(t):
     X = Hc(tp + 1j*t, "x")
     Y = Hc(tp + 1j*t, "y")
     Z = Hc(tp + 1j*t, "z")
-    phi_dot = phi_dot_approx(tp + 1j*t)
-    a = X**2 + Y**2 + (Z + 0.5*(-F)*phi_dot)**2
+    phi_d = phi_dot(tp + 1j*t)
+    a = X**2 + Y**2 + (Z + 0.5*(-F)*phi_d)**2
 #     a = a.real
     Integrand = (cmath.sqrt(a))
 #     Integrand = abs(math.sqrt((m + k*v*F/4)**2 - (v*q(t))**2))

@@ -22,7 +22,7 @@ tt_1 = -math.pi / (2*abs(F))  # first transition time
 tt_2 = math.pi / (2*abs(F))  # second transition time
 n = 200  # step
 t_eval = np.linspace(t_i, t_f, n)  # time
-TP_list = []  # transition probability
+OP_list = []  # occupation probability
 
 h = 1  # Dirac constant
 
@@ -71,7 +71,7 @@ def eig_vec(t, s):
 
     Args:
         t (float): time
-        s (state): plus or minus
+        s (state): upper or lower
 
     Returns:
         array: eigenvector
@@ -79,7 +79,7 @@ def eig_vec(t, s):
     E_1 = math.sqrt(H(t, "x")**2 + H(t, "y")**2 + H(t, "z")**2)  # 断熱エネルギー
 
     # 下の断熱状態を求めるときは断熱エネルギーを符号反転する
-    if s == "minus":
+    if s == "lower":
         E_1 = -E_1
 
     eig_vec = np.array([H(t, "x") - H(t, "y")*1j, E_1 - H(t, "z")])
@@ -111,7 +111,7 @@ def func_psi(t, var):
 
 
 # 各Fにおけるpsiの時間発展を計算し，t_fにおけるpsiとFをvar_fに追加する。
-var_init_tmp = eig_vec(t_i, "minus").tolist()
+var_init_tmp = eig_vec(t_i, "upper").tolist()
 var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
             var_init_tmp[1].real, var_init_tmp[1].imag]
 var_list = solve_ivp(func_psi, [t_i, t_f], var_init, method="LSODA",
@@ -124,14 +124,14 @@ for i in range(n):
     d = var_list.y[3][i]
     psi = np.array([[a+b*1j],
                     [c+d*1j]])
-    qplus = eig_vec(var_list.t[i], "plus")
-    dot = np.vdot(qplus, psi)
-    TP = abs(dot)**2
-    TP_list.append(TP)
+    q_f = eig_vec(var_list.t[i], "lower")
+    dot = np.vdot(q_f, psi)
+    OP = abs(dot)**2
+    OP_list.append(OP)
 
 TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
 P_TLZ = math.exp(TLZ) + t_eval*0
-arr = np.array(TP_list)
+arr = np.array(OP_list)
 plt.plot(t_eval, arr, label="numerical")
 plt.plot(t_eval, P_TLZ, label="theoretical")
 plt.ylim(-0.1, 1.1)

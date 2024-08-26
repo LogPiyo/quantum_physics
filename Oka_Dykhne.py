@@ -96,7 +96,7 @@ def E_plus_unitary_transformed(t):
         t (float): time
 
     Returns:
-        float: adiabatic enegy (unitary transformed)
+        float: adiabatic energy (unitary transformed)
     """
     X = Hc(t, "x")
     Y = Hc(t, "y")

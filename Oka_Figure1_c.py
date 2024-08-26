@@ -76,7 +76,7 @@ def E_adia(t):
         t (float): time
 
     Returns:
-        float: adiabatic enegy
+        float: adiabatic energy
     """
     E_adia = math.sqrt(H(t, "x")**2 + H(t, "y")**2 + H(t, "z")**2)
     return E_adia

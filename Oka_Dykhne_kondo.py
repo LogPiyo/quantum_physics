@@ -92,7 +92,7 @@ def E_plus(t):
         t (float): time
 
     Returns:
-        float: adiabatic enegy
+        float: adiabatic energy
     """
     E_plus = cmath.sqrt(Hc(t, "x")**2 + Hc(t, "y")**2 + Hc(t, "z")**2)
     return E_plus
