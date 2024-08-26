@@ -20,9 +20,6 @@ v = 1  # energy slope
 m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
-t_i = -math.pi  # initial time
-t_f = math.pi  # final time
-
 # constant
 h = 1  # Dirac constant
 TP_list = []  # transition probability
@@ -121,7 +118,7 @@ def Re_E(t):
 
 for F in F_values:
     tt = 0  # transition time
-    zero_approx = (m + k*v*abs(F)/4) / (v * (-F))
+    zero_approx = (m + k*v*(F)/4) / (v * (-F))
     # zero of adiabatic energy (approximated)
 
     # imaginary part of integral of adiabatic energy (unitary transformed)

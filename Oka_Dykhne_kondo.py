@@ -22,9 +22,6 @@ v = 1  # energy slope
 m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
-t_i = -math.pi  # initial time
-t_f = math.pi  # final time
-
 # constant
 h = 1  # Dirac constant
 TP_list = []  # transition probability
@@ -33,7 +30,7 @@ F_values = np.linspace(-2, 2, n)  # time
 
 
 def TLZ_theoretical(F):
-    TLZ = -math.pi * (m - k*v*F/4)**2 / (v * abs(F))
+    TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
     return np.exp(TLZ)
 
 
@@ -65,10 +62,10 @@ def Hc(t, component):
     """
     H = {}
 
-    H['x'] = v * cmath.cos(q(t))
+    H['x'] = -v * cmath.cos(q(t))
     H['y'] = 0.25 * k * v**2 * cmath.cos(q(t)) * cmath.sin(2*q(t))
     H['z'] = m * cmath.sin(q(t))
-    H['x_dot'] = -v * cmath.sin(q(t))
+    H['x_dot'] = v * cmath.sin(q(t))
     H['y_dot'] = (0.25 * k * v**2
                   * (-cmath.sin(q(t))*cmath.sin(2*q(t))
                      + 2*cmath.cos(q(t))*cmath.cos(2*q(t))))
@@ -129,15 +126,13 @@ def Re_E(t):
     Z = Hc(tp + 1j*t, "z")
     phi_dot = phi_dot_approx(tp + 1j*t)
     a = X**2 + Y**2 + (Z + 0.5*(-F)*phi_dot)**2
-#     a = a.real
     Integrand = (cmath.sqrt(a))
-#     Integrand = abs(math.sqrt((m + k*v*F/4)**2 - (v*q(t))**2))
     return -4 * (-F) / abs(F) * Integrand.real
 
 
 for F in F_values:
     tp = math.pi / (2*(-F))  # transition time
-    zero_approx = (m + k*v*abs(F)/4) / (v * (-F))
+    zero_approx = abs(m + k*v*(F)/4) / (v * (-F))
     # zero of adiabatic energy (approximated)
 
     # imaginary part of integral of adiabatic energy (unitary transformed)
