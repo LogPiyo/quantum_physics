@@ -14,17 +14,18 @@ from scipy.integrate import solve_ivp
 v = 1  # energy slope
 m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
-F = -1  # parameter sweep
+F = -1  # parameter sweep (should not change)
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time
 
 tt_1 = -math.pi / (2*abs(F))  # first transition time
 tt_2 = math.pi / (2*abs(F))  # second transition time
-n = 200  # step
+n = 100  # step
 t_eval = np.linspace(t_i, t_f, n)  # time
-OP_list = []  # occupation probability
 
-h = 1  # Dirac constant
+# constant
+h = 1  # Dirac constant (should not change)
+OP_list = []  # occupation probability
 
 
 def q(t):
@@ -48,10 +49,10 @@ def H(t, component):
 
     Args:
         t (float): time
-        component (string): 成分
+        component (string): component of vector
 
     Returns:
-        float: 時刻tにおけるcomponentで指定した成分
+        float: specified component
     """
     H = {}
 
@@ -67,14 +68,14 @@ def H(t, component):
 
 def eig_vec(t, s):
     """
-    eigenvector
+    find eigenvector
 
     Args:
         t (float): time
-        s (state): upper or lower
+        s (string): "upper" or "lower" state
 
     Returns:
-        array: eigenvector
+        ndarray: eigenvector
     """
     E_1 = math.sqrt(H(t, "x")**2 + H(t, "y")**2 + H(t, "z")**2)  # 断熱エネルギー
 
@@ -123,15 +124,17 @@ for i in range(n):
     c = var_list.y[2][i]
     d = var_list.y[3][i]
     psi = np.array([[a+b*1j],
-                    [c+d*1j]])
-    q_f = eig_vec(var_list.t[i], "lower")
+                    [c+d*1j]])  # state vector
+    q_f = eig_vec(var_list.t[i], "lower")  # final state
     dot = np.vdot(q_f, psi)
-    OP = abs(dot)**2
+    OP = abs(dot)**2  # occupation probability
     OP_list.append(OP)
 
-TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
-P_TLZ = math.exp(TLZ) + t_eval*0
+TLZ = -math.pi * (m + k*v*F/4)**2 / (abs(v) * abs(F))
+P_TLZ = math.exp(TLZ) + t_eval*0  # theoretical
 arr = np.array(OP_list)
 plt.plot(t_eval, arr, label="numerical")
 plt.plot(t_eval, P_TLZ, label="theoretical")
 plt.ylim(-0.1, 1.1)
+plt.legend()
+plt.show()

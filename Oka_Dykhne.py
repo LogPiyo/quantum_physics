@@ -20,15 +20,16 @@ v = 1  # energy slope
 m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
+F_values = np.linspace(-2, 2, 100)  # sweep speed
+tt = 0  # transition time
+
 # constant
-h = 1  # Dirac constant
+h = 1  # Dirac constant (should not change)
 TP_list = []  # transition probability
-n = 100  # step
-F_values = np.linspace(-2, 2, n)  # time
 
 
 def TLZ_theoretical(F):
-    TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
+    TLZ = -math.pi * (m + k*v*F/4)**2 / (abs(v) * abs(F))
     return np.exp(TLZ)
 
 
@@ -53,10 +54,10 @@ def Hc(t, component):
 
     Args:
         t (float): time
-        component (string): 取り出したい成分
+        component (string): component of vector
 
     Returns:
-        float: 時刻tにおけるcomponentで指定した成分
+        float: specified component
     """
     H = {}
 
@@ -72,13 +73,13 @@ def Hc(t, component):
 
 def phi_dot(t):
     """
-    define derivative of phi
+    define derivative of azimuthal angle
 
     Args:
         t (float): time
 
     Returns:
-        float: derivative of phi
+        float: derivative of azimuthal angle
     """
     num = -Hc(t, "x")*Hc(t, "y_dot") + Hc(t, "x_dot")*Hc(t, "y")
     den = Hc(t, "x")**2 + Hc(t, "y")**2
@@ -87,7 +88,7 @@ def phi_dot(t):
 
 def E_plus_unitary_transformed(t):
     """
-    adiabatic energy (unitary transformed)
+    define adiabatic energy (unitary transformed)
 
     Args:
         t (float): time
@@ -110,28 +111,28 @@ def Re_E(t):
         t (float): time
 
     Returns:
-        float: adiabatic energy
+        float: real part of adiabatic energy (unitary transformed)
     """
     Integrand = E_plus_unitary_transformed(tt + 1j*t)
-    return -4 * (-F) / abs(F) * Integrand.real
+    return Integrand.real
 
 
 for F in F_values:
-    tt = 0  # transition time
-    zero_approx = (m + k*v*(F)/4) / (v * (-F))
+    zero_approx = abs(m + k*v*F/4) / (abs(v) * (-F))
     # zero of adiabatic energy (approximated)
 
     # imaginary part of integral of adiabatic energy (unitary transformed)
     ll_Re_E = 0  # lower limit
     ul_Re_E = zero_approx  # upper limit
     log_TP, _ = quad(Re_E, ll_Re_E, ul_Re_E)
+    log_TP *= -4 * (-F) / abs(F)
 
-    TP = math.exp(log_TP)
+    TP = math.exp(log_TP)  # transition probability
     TP_list.append(TP)
 
 plt.plot(F_values, TP_list, label="numerical")
 plt.plot(F_values, TLZ_theoretical(F_values),
          linestyle=":", label="theoretical")
-plt.legend()
 plt.ylim(-0.1, 1.1)
+plt.legend()
 plt.show()
