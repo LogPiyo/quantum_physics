@@ -116,6 +116,9 @@ def Re_E(t):
 
 
 for v in v_values:
+    if abs(v) < 0.03:  # avoid Integration Warning
+        continue
+
     tp = math.pi / (2*abs(F))  # transition time
     zero_approx = abs(m - k*abs(v)*F/4) / (abs(v) * (-F))
     # -pi/2のときは分子の第二項の符号が変わる
@@ -131,6 +134,7 @@ for v in v_values:
     TP = math.exp(log_TP)
     TP_list.append(TP)
 
+v_values = v_values[abs(v_values) >= 0.03]  # avoid Integration Warning
 plt.plot(v_values, TP_list, label="numerical")
 plt.plot(v_values, TLZ_theoretical(v_values),
          linestyle=":", label="theoretical")
