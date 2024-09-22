@@ -308,7 +308,7 @@ for v in v_val:
 # グラフの設定
 
 # %%
-plt.plot(v_val, Stokes_val, linestyle="None", marker="x", label=r"$D_y \ne 0$")
+plt.plot(v_val, Stokes_val, linestyle="None", marker="x", label=r"$D_y = 45$")
 plt.plot(v_val, Stokes_val_LZ, label=r"$D_y = 0$")
 plt.xlabel(r"energy slope $\epsilon_0$")
 plt.ylabel(r"Stokes phase $\psi_s$")
