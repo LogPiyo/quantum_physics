@@ -10,7 +10,7 @@ P = \exp \left(-\frac{4}{|w|} \int_0^{\mathrm{Im} t_c} dv \mathrm{Re} (E|_{t=\ma
 を算出したとき，完全トンネルが見られることを確かめるためのプログラムです。ただし、ゼロ点のみ遷移点近傍で近似しています。
 
 ## Oka_Dykhne_v_evaluate.py
-Oka_Dykhne.pyで$F$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。<br>
+Oka_Dykhne.pyで$`F`$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。<br>
 Takayoshi, Wu and Oka (2021) のHamiltonianにおいて、$`\nu`$を変化させることと$`F`$を変化させることは等価であるため、Oka_Dykhne.pyと見かけ上まったく同じグラフになります。ただし解釈はそれぞれ異なります。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
 
 ## Oka_Figure1_c.py
