@@ -1,4 +1,5 @@
-# %%[markdown]のHamiltonianを用いて，
+# %%[markdown]
+# これはTakayoshi, Wu and Oka(2021)のHamiltonianを用いて，
 # Lim, Fuchs and Montambaux(2015)の論文の遷移確率
 # $$
 # P = \exp \left(-\frac{4}{|w|} \int_0^{\mathrm{Im} t_c} dv
