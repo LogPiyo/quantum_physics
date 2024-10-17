@@ -35,6 +35,15 @@ Oka_Dykhne_kondo.pyで$`F`$を固定して $`\nu`$ を変化させるプログ�
 遷移点付近のHamiltonianがすべて同じになる系の場合で下記を実現します。Oka_Dykhne_kondo.pyで$`F`$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
 - 現状Integration Warningが出ます。→調査中
 
+## Oka_Dykhne_double_passage.py
+Oka(2021)をもとにユニタリ変換後のHamiltonianで占有確率を数値計算するプログラムです。
+```math
+\Delta_x \sin{\omega t} \sigma_x
++ \Delta_y \cos{\omega t} \sin{2 \omega t}\sigma_y
++ \varepsilon_0 \cos{\omega t} \sigma_z
+```
+に対してユニタリ変換します。
+
 ## TLZ_time_evolution.py
 これはTakayoshi, Wu and Oka (2021) のTwisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微分を行うことで、占有確率の時間発展をプロットするプログラムです。初期状態がlower stateのとき、upper stateの占有確率を求めます。
 
