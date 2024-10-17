@@ -29,8 +29,8 @@ F = -1  # sweep speed Fの値は基本的に変更しない(初期値 -1)(時間
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time
 
-tp_1 = -math.pi / (2*abs(F))  # first transition time
-tp_2 = math.pi / (2*abs(F))  # second transition time
+tp_1 = -math.pi / (2 * abs(F))  # first transition time
+tp_2 = math.pi / (2 * abs(F))  # second transition time
 
 # constant
 h = 1  # Dirac constant (should not change, initial value: 1)
@@ -40,8 +40,8 @@ OP_list = []  # ocupation probability
 t_eval = np.linspace(t_i, t_f, n)  # time
 delta = m**2 / (2 * abs(v) * abs(F))  # adiabatic parameter
 phi_s = (math.pi/4
-         + delta * (math.log(delta)-1)
-         + cmath.phase(scipy.special.gamma(1-1j*delta)))  # Stokes phase(弧度法)
+         + delta * (math.log(delta) - 1)
+         + cmath.phase(scipy.special.gamma(1 - 1j*delta)))  # Stokes phase(弧度法)
 print("Stokes phase: ", phi_s)
 TLZ = -math.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
 # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
@@ -168,7 +168,7 @@ def Re_E(t):
     return Integrand.real
 
 
-# integral
+# integral of transition probability
 ll_Re_E = 0  # lower limit
 ul_Re_E = zero_approx  # upper limit
 TP, _ = quad(Re_E, ll_Re_E, ul_Re_E)
@@ -180,7 +180,7 @@ def Im_E_1(t):
     return Integrand.imag
 
 
-# integral
+# integral of phase term
 ll_Im_E_1 = 0  # lower limit
 ul_Im_E_1 = zero_approx  # upper limit
 phase_term1, _ = quad(Im_E_1, ll_Im_E_1, ul_Im_E_1)
@@ -192,7 +192,7 @@ def Im_E_2(t):
     return Integrand.imag
 
 
-# integral
+# integral of phase term
 ll_Im_E_2 = 0  # lower limit
 ul_Im_E_2 = zero_approx  # upper limit
 phase_term2, _ = quad(Im_E_2, ll_Im_E_2, ul_Im_E_2)
@@ -204,7 +204,7 @@ def E_3(t):
     return Integrand.real
 
 
-# integral
+# integral of phase term
 ll_E_3 = tp_1  # lower limit
 ul_E_3 = tp_2  # upper limit
 phase_term3, _ = quad(E_3, ll_E_3, ul_E_3)
@@ -285,7 +285,7 @@ P_f_adia = 4 * math.exp(TP) * math.cos(phase)**2
 P_f_HS = (4 * math.exp(TP) * (1 - math.exp(TP)) * math.cos(phi_s + phase)**2)
 # occupation probability (heuristic solution)
 
-# ##出力用プログラム####################################################
+# 出力用プログラム
 # 値を表示する
 dic = {
     'v': v,
