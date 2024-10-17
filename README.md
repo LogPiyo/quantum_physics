@@ -77,8 +77,8 @@ H_\mathrm{MTLZ}(t)
 | 関数 | $`x = -\frac{\pi}{2}`$ | $`x = \frac{\pi}{2}`$
 | -- | -- | -- |
 | $`\sin(x)`$ | $`-1`$ | $`1`$
-| $`\cos(x)`$ | $`(x + \frac{\pi}{2})`$| $`-(x - \frac{\pi}{2})`$
-| $`\sin^2(2x)`$ | $`4(x - \frac{\pi}{2})^2`$ | $`4(x + \frac{\pi}{2})^2`$
+| $`\cos(x)`$ | $`\left(x + \frac{\pi}{2} \right)`$| $`- \left(x - \frac{\pi}{2} \right)`$
+| $`\sin^2(2x)`$ | $`4 \left(x - \frac{\pi}{2} \right)^2`$ | $`4 \left(x + \frac{\pi}{2} \right)^2`$
 
 ### 図1 断熱エネルギーの時間発展
 <img src="resources/MTLZ_Hamiltonian.jpg" alt="MTLZ Hamitonianの概要" width=400>
