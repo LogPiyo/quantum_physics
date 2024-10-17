@@ -2,8 +2,8 @@
 # Oka(2021)をもとに
 # ユニタリ変換後のHamiltonianで占有確率を数値計算<br>
 # $$\Delta_x \sin{\omega t} \sigma_x
-#  + Delta_y \cos{\omega t} \sin{2 \omega t}\sigma_y
-#  + \epsilon_0 \cos{\omega t} \sigma_z\\$$
+#  + \Delta_y \cos{\omega t} \sin{2 \omega t}\sigma_y
+#  + \varepsilon_0 \cos{\omega t} \sigma_z\\$$
 # に対してユニタリ変換する
 # - 1回目の遷移
 #   - kは大きくしすぎない(xとyは同程度のオーダーまで)
