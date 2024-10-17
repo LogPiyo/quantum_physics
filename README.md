@@ -72,7 +72,17 @@ H_\mathrm{MTLZ}(t)
 - 特に$`\Delta_y = 0`$のとき，multiple-passage Landau-Zenerモデルと呼びます。<br>
 - このモデルは，$`t = n \pi/2\omega \, (n \in \mathbb{N})`$近傍でtwisted Landau-Zenerモデルとみなすことができます。
 
+### 参考) 最高次までのTaylor展開の表
+
+| 関数 | $`x = -\frac{\pi}{2}`$ | $`x = \frac{\pi}{2}`$
+| -- | -- | -- |
+| $`\sin(x)`$ | $`-1`$ | $`1`$
+| $`\cos(x)`$ | $`(x + \frac{\pi}{2})`$| $`-(x - \frac{\pi}{2})`$
+| $`\sin^2(2x)`$ | $`4(x - \frac{\pi}{2})^2`$ | $`4(x + \frac{\pi}{2})^2`$
+
+### 図1 断熱エネルギーの時間発展
 <img src="resources/MTLZ_Hamiltonian.jpg" alt="MTLZ Hamitonianの概要" width=400>
+<br>
 
 # 変数間の関係
 このレポジトリでは，同じ物理量に対して異なる変数が混在しています。変数間の対応関係は以下を参照してください。
