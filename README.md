@@ -58,7 +58,7 @@ H_\mathrm{TLZ}(t)
 \varepsilon_0 \omega t + i \frac{1}{2} \Delta_y (\omega t)^2 & \Delta_z
 \end{pmatrix} 
 ```
-特に$`\Delta_y = 0`$のとき，Landau-Zenerモデルと呼びます。
+- 特に$`\Delta_y = 0`$のとき，Landau-Zenerモデルと呼びます。
 
 ## multiple-passage twisted Landau-Zenerモデル
 ```math
@@ -69,7 +69,8 @@ H_\mathrm{MTLZ}(t)
 -\varepsilon_0 \cos \omega t - i \frac{1}{2} \Delta_y \sin^2 (2 \omega t) & -\Delta_z \sin \omega t
 \end{pmatrix}
 ```
-特に$`\Delta_y = 0`$のとき，multiple-passage Landau-Zenerモデルと呼びます。
+- 特に$`\Delta_y = 0`$のとき，multiple-passage Landau-Zenerモデルと呼びます。<br>
+- このモデルは，$`t = n \pi/2\omega \, (n \in \mathbb{N})`$近傍でtwisted Landau-Zenerモデルとみなすことができます。
 
 <img src="resources/MTLZ_Hamiltonian.jpg" alt="MTLZ Hamitonianの概要" width=400>
 
@@ -80,7 +81,8 @@ H_\mathrm{MTLZ}(t)
 \begin{align*}
 \text{minimal energy gap} &: m \leftrightarrow \Delta_z \\
 \text{energy slope} &: \nu \leftrightarrow \varepsilon_0 \\
-\text{geodesic curvature} &: k \leftrightarrow \frac{4 \Delta_y}{\varepsilon_0^2}
+\text{geodesic curvature} &: k \leftrightarrow \frac{4 \Delta_y}{\varepsilon_0^2} \\
+\text{sweep speed} &: F \leftrightarrow -\omega
 \end{align*}
 ```
 
