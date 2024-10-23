@@ -5,7 +5,7 @@
 ## Oka_Dykhne.py
 これはtwisted Landau-ZenerモデルのHamiltonianを用いて，Lim, Fuchs and Montambaux (2015) の論文の遷移確率
 ```math
-P = \exp \left(-\frac{4}{|w|} \int_0^{\mathrm{Im} t_c} dv \mathrm{Re} (E|_{t=\mathrm{Re} t_c + iv}\right)
+P = \exp \left(-\frac{4}{|w|} \int_0^{\mathrm{Im} t_c} dv\, \mathrm{Re} (E|_{t=\mathrm{Re} t_c + iv})\right)
 ```
 を算出したとき，完全トンネルが見られることを確かめるためのプログラムです。ただし、ゼロ点のみ遷移点近傍で近似しています。
 
