@@ -3,18 +3,18 @@
 
 # 各プログラムの説明
 ## Oka_Dykhne.py
-これはtwisted Landau-ZenerモデルのHamiltonianを用いて，Lim, Fuchs and Montambaux (2015) の論文の遷移確率
+twisted Landau-ZenerモデルのHamiltonianを用いて，Lim, Fuchs and Montambaux (2015) の遷移確率
 ```math
 P = \exp \left(-\frac{4}{|w|} \int_0^{\mathrm{Im} t_c} dv\, \mathrm{Re} (E|_{t=\mathrm{Re} t_c + iv})\right)
 ```
 を算出したとき，完全トンネルが見られることを確かめるためのプログラムです。ただし、ゼロ点のみ遷移点近傍で近似しています。
 
 ## Oka_Dykhne_v_evaluate.py
-Oka_Dykhne.pyで$`F`$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。<br>
-twisted Landau-ZenerモデルのHamiltonianにおいて、$`\nu`$を変化させることと$`F`$を変化させることは等価であるため、Oka_Dykhne.pyと見かけ上まったく同じグラフになります。ただし解釈はそれぞれ異なります。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
+`Oka_Dykhne.py`で$`F`$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。<br>
+twisted Landau-ZenerモデルのHamiltonianにおいて、$`\nu`$を変化させることと$`F`$を変化させることは等価であるため、`Oka_Dykhne.py`と見かけ上まったく同じグラフになります。ただし解釈はそれぞれ異なります。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
 
 ## Oka_Figure1_c.py
-これはTakayoshi, Wu and Oka (2021) のFigure1 (c)を再現するプログラムです。任意のHamiltonianで試すことができます。
+Takayoshi, Wu and Oka (2021) のFigure1 (c)を再現するプログラムです。任意のHamiltonianで試すことができます。
 
 ## Oka_Dykhne_Kondo.py
 multiple-passage Twisted Landau-ZenerモデルのHamiltonianを用いて，
@@ -28,11 +28,11 @@ P = \exp \left(-\frac{4}{|\delta|} \int_0^{\mathrm{Im} t_c} dv
 ただし、断熱エネルギーのゼロ点の虚部$`\mathrm{Im} \, t_c`$のみ遷移点近傍で近似した表式を使っています。
 
 ## Oka_Dykhne_Kondo_e_evaluate.py
-Oka_Dykhne_kondo.pyで$`F`$を固定して $`\nu`$ を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
+`Oka_Dykhne_kondo.py`で$`F`$を固定して $`\nu`$ を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
 - 現状Integration Warningが出ます。→調査中
 
 ## Oka_Dykhne_Kondo_e_evaluate_symmetry.py
-遷移点付近のHamiltonianがすべて同じになる系の場合で下記を実現します。Oka_Dykhne_kondo.pyで$`F`$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
+遷移点付近のHamiltonianがすべて同じになる系の場合で下記を実現します。`Oka_Dykhne_kondo.py`で$`F`$を固定して$`\nu`$を変化させるプログラムです。energy slope $`\nu`$を横軸、遷移確率$`P`$を縦軸にしたグラフを出力します。$`\nu`$, $`F`$の符号反転はそれぞれ、時間反転、エネルギー反転に対応します。
 - 現状Integration Warningが出ます。→調査中
 
 ## Oka_Dykhne_double_passage.py
@@ -45,7 +45,7 @@ Oka(2021)をもとにユニタリ変換後のHamiltonianで占有確率を数値
 に対してユニタリ変換します。
 
 ## TLZ_time_evolution.py
-これはTakayoshi, Wu and Oka (2021) のTwisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微分を行うことで、占有確率の時間発展をプロットするプログラムです。初期状態がlower stateのとき、upper stateの占有確率を求めます。
+twisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微分を行うことで、占有確率の時間発展をプロットするプログラムです。初期状態がlower stateのとき、upper stateの占有確率を求めます。
 
 # Hamiltonian
 本レポジトリで登場するHamiltonianの一覧です。
