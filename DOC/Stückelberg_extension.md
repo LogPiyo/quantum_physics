@@ -12,7 +12,7 @@ Hamiltonian
 \begin{align*}
 H(t)
 &= B_x \,\sigma_x + B_y \,\sigma_y + B_z \,\sigma_z\\
-&\equiv \bm{B} \cdot \bm{\sigma}
+&\equiv \boldsymbol{B} \cdot \boldsymbol{\sigma} 
 \end{align*}
 ```
 に対して，ユニタリ行列
@@ -30,7 +30,7 @@ U(t)
     H'(t)
     &= \sqrt{B_x^2 + B_y^2} \, \sigma_x + \left( B_z - \frac{1}{2} \omega \dot{\phi} \right) \, \sigma_z\\
     &\equiv B'_x \, \sigma_x + B'_z \, \sigma_z\\
-    &= \bm{B}' \cdot \bm{\sigma}
+    &= \boldsymbol{B}' \cdot \boldsymbol{\sigma}
 \end{align*}
 ```
 と表せます。
@@ -54,7 +54,7 @@ U(t)
 が得られます。ここで，$`A_-(t) \approx 1`$ (断熱近似) を仮定すると，遷移振幅についての積分
 ```math
 A_+(t_f)
-= \int_{t_i}^{t_f} dt \frac{1}{2 (E'_+)^2 |B'_x|}\left( [\bm{B}'\times (\bm{B}'\times \dot{\bm{B}'})]_z \right) \exp \left(i \int_0^t d\tau 2 E'_+ \right)
+= \int_{t_i}^{t_f} dt \frac{1}{2 (E'_+)^2 |B'_x|}\left( [\boldsymbol{B}'\times (\boldsymbol{B}'\times \dot{\boldsymbol{B}'})]_z \right) \exp \left(i \int_0^t d\tau 2 E'_+ \right)
 ```
 に帰着します。この積分は断熱エネルギーの零点に由来する留数の総和
 ```math
