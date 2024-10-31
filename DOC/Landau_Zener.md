@@ -23,5 +23,5 @@ Landau-Zener公式は，1932年に，Majorana，Landau，Zener，Stückelbergに
 |-|-|-|-|
 |Majorana|Laplace変換|可|[こちら](/DOC/Majorana.md)|
 |Landau|Dykhne公式|不可|coming soon|
-|Zener|Weberの微分方程式，放物柱関数|可|coming soon|
+|Zener|Weberの微分方程式，放物柱関数|可|[こちら](/DOC/Zener.md)|
 |Stückelberg|WKB近似|不可|coming soon|
