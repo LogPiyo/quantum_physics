@@ -69,7 +69,7 @@ A_+(t_f)
     &= \frac{\pi}{3} e^{-\mathrm{Im} \beta_1}e^{i \frac{\mathrm{Re} \beta_1 + \mathrm{Re} \beta_4}{2}} 2 i \sin \left( \frac{\mathrm{Re}\beta_1 - \mathrm{Re}\beta_4}{2} \right)
 \end{align*}
 ```
-と書けるので，double-passage TLZモデルの遷移確率は，
+と書けるため，double-passage TLZモデルの遷移確率は，
 ```math
 \begin{align*}
 P
