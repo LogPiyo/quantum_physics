@@ -1,7 +1,7 @@
 # 目的
 ```math
 P
-\rightarrow 4 \exp \left(-4 \frac{\omega}{|\omega|} \mathrm{Im} \int_0^{t_1} dt E'_+  \right) \left( 1 - \exp \left( -4 \frac{\omega}{|\omega|} \mathrm{Im} \int_0^{t_1} dt E'_+  \right) \right) \cos^2 \left(-\frac{\omega}{|\omega|} \int_{t_4}^{t_1} dt E'_+ + \varphi_s \right).
+\rightarrow 4 \exp \left(-4 \frac{\omega}{|\omega|} \mathrm{Im} \int_0^{t_1} dt E'_+  \right) \left( 1 - \exp \left( -4 \frac{\omega}{|\omega|} \mathrm{Im} \int_0^{t_1} dt E'_+  \right) \right) \cos^2 \left(-\frac{\omega}{|\omega|} \int_{t_4}^{t_1} dt E'_+ + \varphi_s \right)
 ```
 を導出します。
 
@@ -84,3 +84,26 @@ P
 \rightarrow 4 \exp \left(-4 \frac{\omega}{|\omega|} \mathrm{Im} \int_0^{t_1} dt E'_+  \right) \left( 1 - \exp \left( -4 \frac{\omega}{|\omega|} \mathrm{Im} \int_0^{t_1} dt E'_+  \right) \right) \cos^2 \left(-\frac{\omega}{|\omega|} \int_{t_4}^{t_1} dt E'_+ + \varphi_s \right)
 ```
 が得られます。
+
+## Stokes位相$`\varphi_s`$
+一般に (?)，断熱パラメータ
+```math
+\delta
+= \frac{1}{2 \pi} \mathrm{Im} \int_{r_-}^{r_+} (k_- - k_+) dr \\
+= \frac{1}{\pi} \mathrm{Im} \int_R^{r_+} (k_- - k_+) dr
+```
+に対して，
+```math
+\varphi_s
+= \frac{\pi}{4} + \delta (\ln \delta -1) + \mathrm{Arg} \, \Gamma (1 - i\delta)
+```
+という関係式が成立します (Child, 1974)。
+
+## 数値計算との比較
+以上の結果を数値計算と比較したのが，`Oka_Dykhne_double_passage.py`です。
+
+出力例)
+
+<img src="../resources/double_passage_ex.png" alt="出力例" height=300>
+
+ここで，青実線はShrödinger方程式を数値的に解いた時の占有確率，緑実線は上で求めた遷移確率を表しています。青実線と緑実線は，終時間 (time = 3) で一致するはずですが，図を見るとそうなっていません。何か見落としている位相があるのかもしれません。
