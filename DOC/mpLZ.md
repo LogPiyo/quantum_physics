@@ -210,3 +210,15 @@ S^n = \alpha_n + \beta_n S
 \end{align*}
 ```
 です。
+
+## Stückelberg公式
+特に，
+```math
+\begin{align*}
+P_2
+&= q \left(\frac{\sin 2\xi}{\cos \xi}\right)^2 \\
+&= 4 q \sin^2 \xi \\
+&= 4 q (1-q) \sin(\theta + \phi_s)
+\end{align*}
+```
+はStückelberg公式と呼ぶことがあります。
