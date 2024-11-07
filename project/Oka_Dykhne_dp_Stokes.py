@@ -15,8 +15,9 @@ from scipy.integrate import solve_ivp, quad
 
 # parameter
 v_val = np.linspace(-100, 100, 50)  # energy slope
+v_val = v_val[(v_val >= 5) | (v_val <= -5)]
 m = 4  # minimal energy gap
-k = 0  # geodesic curvature
+k = 0.1  # geodesic curvature
 F = -1  # sweep speed (should not change)(default value: -1)(時間反転させないため)
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time
@@ -223,19 +224,23 @@ def Stokes_phase(v):
 
 
 for initial_v in [-5, 5]:
+    # 基準
     prev_ans_phi_s = Stokes_phase(initial_v)
-    if initial_v == -5:
-        v_val_find_Stokes = np.sort(v_val)[::-1]
+
+    if initial_v < 0:  # start from v = -5
+        # v_val_find_Stokes is [-2, -4, -6, ...]
         v_val_find_Stokes = v_val[v_val < 0]
-    else:
-        v_val_find_Stokes = np.sort(v_val)
+        v_val_find_Stokes = v_val_find_Stokes[:: -1]
+    
+    else:  # start from v = 5
+        # v_val_find_Stokes is [2, 4, 6, ...]
         v_val_find_Stokes = v_val[v_val > 0]
 
     for v in v_val_find_Stokes:
         ans_phi_s = 0
         min_error = 10
-        for d_phi_s in np.linspace(-0.01, 0.01, 1):
-            phi_s = Stokes_phase(v) + d_phi_s  # Stokes phase(弧度法)
+        for d_phi_s in np.linspace(-0.1, 0.1, 10):
+            phi_s = prev_ans_phi_s + d_phi_s  # Stokes phase(弧度法)
             TLZ = -math.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
             # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
             zero_approx = abs(m - k*abs(v)*F/4) / (abs(v) * (-F))
@@ -297,8 +302,11 @@ for initial_v in [-5, 5]:
                 ans_phi_s = phi_s
 
         print("v = ", v, "Stokes = ", ans_phi_s, "error = ", min_error)
-        prev_ans_phi_s = ans_phi_s
+        prev_ans_phi_s = ans_phi_s  # 1つ前の点を基準にする
         Stokes_val.append(ans_phi_s)
+    
+    if initial_v < 0:
+        Stokes_val = Stokes_val[:: -1]
 print("completed")
 
 for v in v_val:
@@ -313,9 +321,12 @@ plt.plot(v_val, Stokes_val_LZ, label=r"$D_y = 0$")
 plt.xlabel(r"energy slope $\epsilon_0$")
 plt.ylabel(r"Stokes phase $\psi_s$")
 plt.legend()
+plt.ylim(-0.1, 1.1)
 plt.show()
 
-# %%[markdown]
+# %%
 # Sample
 # v_val = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, -5.0, -10.0, -15.0, -20.0, -25.0, -30.0, -35.0, -40.0, -45.0, -50.0, -55.0, -60.0, -65.0, -70.0, -75.0, -80.0, -85.0, -90.0, -95.0, -100.0]
 # Stokes_val = [0.20287276377942887, 0.21817888622840845, 0.160015620922286, 0.15083194745289824, 0.23960745765697986, 0.2610360290855513, 0.28858704949371455, 0.31001562092228596, 0.343689090310041, 0.33450541684065327, 0.3314441923508573, 0.4140972535753471, 0.3191992943916736, 0.3957299066365716, 0.36817888622840833, 0.3651176617386124, 0.40491358010595935, 0.4691992943916736, 0.44164827398351036, 0.4508319474528981, 0.20287276377942887, 0.3011486258483944, 0.3477003499863255, 0.44597621205529103, 0.5545969017104635, 0.6218382810208083, 0.6787348327449463, 0.7356313844690843, 0.7821831086070153, 0.8183900051587395, 0.8649417292966706, 0.8908037982621878, 0.9477003499863257, 0.9218382810208084, 0.8752865568828774, 1.0252865568828773, 0.9166658672277048, 0.9942520741242565, 0.9683900051587393, 0.9735624189518428]
+
+# %%
