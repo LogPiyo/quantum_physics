@@ -67,12 +67,12 @@ twisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微
      &=
      \begin{pmatrix}
           m & \nu F t - i \frac{1}{2} \kappa_{||} \nu^2 (F t)^2\\
-          \nu F t + i \frac{1}{2} \kappa_{||} \nu^2 (F t)^2 & m
+          \nu F t + i \frac{1}{2} \kappa_{||} \nu^2 (F t)^2 & -m
      \end{pmatrix} \\
      &=
      \begin{pmatrix}
           \Delta_z & \varepsilon_0 \omega t - i \frac{1}{2} \Delta_y (\omega t)^2\\
-          \varepsilon_0 \omega t + i \frac{1}{2} \Delta_y (\omega t)^2 & \Delta_z
+          \varepsilon_0 \omega t + i \frac{1}{2} \Delta_y (\omega t)^2 & -\Delta_z
      \end{pmatrix} 
 \end{align*}
 ```
@@ -80,7 +80,7 @@ twisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微
 ```math
 \begin{pmatrix}
     m & \sqrt{(\nu F t)^2 + (\frac{1}{2} \kappa_{||} \nu^2 (F t)^2)^2}\\
-    \sqrt{(\nu F t)^2 + (\frac{1}{2} \kappa_{||} \nu^2 (F t)^2)^2} & m
+    \sqrt{(\nu F t)^2 + (\frac{1}{2} \kappa_{||} \nu^2 (F t)^2)^2} & -m
 \end{pmatrix}
 ```
 をtwisted Landau-Zenerモデルと呼びます。
