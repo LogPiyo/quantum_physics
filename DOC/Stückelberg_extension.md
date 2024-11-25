@@ -28,6 +28,7 @@ U(t)
 ```math
 \begin{align*}
     H'(t)
+    &= U^{\dagger} H U - i U^{\dagger} \frac{\partial}{\partial t} U
     &= \sqrt{B_x^2 + B_y^2} \, \sigma_x + \left( B_z - \frac{1}{2} \omega \dot{\phi} \right) \, \sigma_z\\
     &\equiv B'_x \, \sigma_x + B'_z \, \sigma_z\\
     &= \boldsymbol{B}' \cdot \boldsymbol{\sigma}
