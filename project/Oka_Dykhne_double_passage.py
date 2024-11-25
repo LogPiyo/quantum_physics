@@ -38,7 +38,7 @@ TP_list = []  # transition probability
 n = 500  # step
 OP_list = []  # ocupation probability
 t_eval = np.linspace(t_i, t_f, n)  # time
-delta = m**2 / (2 * abs(v) * abs(F))  # adiabatic parameter
+delta = (m - k*v*F/4)**2 / (2 * abs(v) * abs(F))  # adiabatic parameter
 phi_s = (math.pi/4
          + delta * (math.log(delta) - 1)
          + cmath.phase(scipy.special.gamma(1 - 1j*delta)))  # Stokes phase(弧度法)
@@ -297,10 +297,11 @@ dic = {
     'P_f_HS1': P_f_HS,
     'P_f_num': OP_list[-1],
 }
-ll = max([len(m) for m in dic.keys()])
-for m, ii in dic.items():
-    print(f'{m:{ll}} : {ii}')
+ll = max([len(mm) for mm in dic.keys()])
+for mm, ii in dic.items():
+    print(f'{mm:{ll}} : {ii}')
 
+# %%
 # グラフ表示
 P_TP = math.exp(TP)
 P_TLZ = math.exp(TLZ)
@@ -316,5 +317,6 @@ plt.xlim([-3, 3])
 plt.ylim([-0.1, 1.1])
 plt.xlabel(r"time $t$")
 plt.ylabel(r"occupation probability $P$")
+plt.title(rf"$\varepsilon_0 = {v}, \Delta_z = {m}, \Delta_y = {v**2 * k / 4:.0f}, \omega = {-F}$")
 plt.legend()
 plt.show()
