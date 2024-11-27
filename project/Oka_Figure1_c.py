@@ -3,10 +3,12 @@
 # 任意のHamiltonianで試すことができます。
 
 # %%
-import math
+import _pathmagic # noqa
+
 import numpy as np
 import matplotlib.pyplot as plt
 
+from my_module.function import TLZ_theoretical, q, func_psi_module, eig_vec
 from scipy.integrate import solve_ivp
 
 # parameter
@@ -26,27 +28,7 @@ t_eval = np.linspace(-t_f, t_f, n)  # time
 F_values = np.linspace(-2, 2, n)  # sweep speed
 
 
-def TLZ_theoretical(F):
-    TLZ = -math.pi * (m + k*v*F/4)**2 / (v * abs(F))
-    return np.exp(TLZ)
-
-
-def q(t):
-    """
-    define parameter sweep q
-
-    q = adiabatic parameter * time
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: q
-    """
-    return -F * t
-
-
-def H(t, component):
+def H(t, component, real=True):
     """
     define real Hamiltonian
 
@@ -59,77 +41,23 @@ def H(t, component):
     """
     H = {}
 
-    H['x'] = v * q(t)
-    H['y'] = 0.5 * k * v**2 * q(t)**2
+    H['x'] = v * q(t, F)
+    H['y'] = 0.5 * k * v**2 * q(t, F)**2
     H['z'] = m
     H['x_dot'] = v
-    H['y_dot'] = k * v**2 * q(t)
+    H['y_dot'] = k * v**2 * q(t, F)
     H['z_dot'] = 0
 
     return H[component]
 
 
-def E_adia(t):
-    """
-    adiabatic energy (eigenvalue)
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: adiabatic energy
-    """
-    E_adia = math.sqrt(H(t, "x")**2 + H(t, "y")**2 + H(t, "z")**2)
-    return E_adia
-
-
 def func_psi(t, var):
-    """
-    state vector
-
-    (t_f)における系の状態ベクトル(psi(t_f))を求める関数です。
-    psiの第1成分をa+ib, 第2成分をc*idとします。
-    var[0]=a,var[1]=b, var[2]=c, var[3]=dとします。
-
-    Args:
-        t (float): time
-        var (list): 状態ベクトルの各成分を要素とするlist
-
-    Returns:
-        list: 微分方程式
-    """
-    dadt = (1/h) * (H(t, "x")*var[3] - H(t, "y")*var[2] + H(t, "z")*var[1])
-    dbdt = (-1/h) * (H(t, "x")*var[2] + H(t, "y")*var[3] + H(t, "z")*var[0])
-    dcdt = (1/h) * (H(t, "x")*var[1] + H(t, "y")*var[0] - H(t, "z")*var[3])
-    dddt = (-1/h) * (H(t, "x")*var[0] - H(t, "y")*var[1] - H(t, "z")*var[2])
-
-    return [dadt, dbdt, dcdt, dddt]
-
-
-def eig_vec(t, s):
-    """
-    eigenvector
-
-    Args:
-        t (float): time
-        s (string): select upper or lower state
-
-    Returns:
-        array: eigenvector
-    """
-    energy = E_adia(t)
-    # 下の断熱状態を求めるときは断熱エネルギーを符号反転する
-    if s == "lower":
-        energy = -energy
-
-    eig_vec = np.array([H(t, "x") - H(t, "y")*1j, energy - H(t, "z")])
-    eig_vec /= np.linalg.norm(eig_vec)  # normalization
-    return eig_vec
+    return func_psi_module(t, H, var)
 
 
 # 各Fにおけるpsiの時間発展を計算する
 for F in F_values:
-    var_init_tmp = eig_vec(t_i, "upper").tolist()  # initial state
+    var_init_tmp = eig_vec(t_i, H, "upper").tolist()  # initial state
     var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
                 var_init_tmp[1].real, var_init_tmp[1].imag]
     var_list = solve_ivp(func_psi, [t_i, t_f], var_init,
@@ -141,13 +69,13 @@ for F in F_values:
     d = var_list.y[3][-1]
     psi = np.array([[a+b*1j],
                     [c+d*1j]])  # state vector
-    q_f = eig_vec(t_f, "lower")  # final state
+    q_f = eig_vec(t_f, H, "lower")  # final state
     dot = np.vdot(q_f, psi)
     TP = abs(dot)**2  # transition probability
     TP_list.append(TP)
 
 plt.plot(F_values, TP_list, label="numerical")
-plt.plot(F_values, TLZ_theoretical(F_values),
+plt.plot(F_values, TLZ_theoretical(v, F_values, m, k),
          linestyle=":", label="theoretical")
 plt.legend()
 plt.show()
