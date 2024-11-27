@@ -4,10 +4,12 @@
 # プログラムです。初期状態がlower stateのとき、upper stateの占有確率を求めます。
 
 # %%
+import _pathmagic # noqa
 import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+from my_module.function import q, eig_vec, func_psi_module
 from scipy.integrate import solve_ivp
 
 # parameter
@@ -28,22 +30,7 @@ h = 1  # Dirac constant (should not change)
 OP_list = []  # occupation probability
 
 
-def q(t):
-    """
-    define parameter sweep q
-
-    q = adiabatic parameter * time
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: q
-    """
-    return -F * t
-
-
-def H(t, component):
+def H(t, component, real=True):
     """
     define real Hamiltonian
 
@@ -56,63 +43,22 @@ def H(t, component):
     """
     H = {}
 
-    H['x'] = v * q(t)
-    H['y'] = 0.5 * k * v**2 * q(t)**2
+    H['x'] = v * q(t, F)
+    H['y'] = 0.5 * k * v**2 * q(t, F)**2
     H['z'] = m
     H['x_dot'] = v
-    H['y_dot'] = k * v**2 * q(t)
+    H['y_dot'] = k * v**2 * q(t, F)
     H['z_dot'] = 0
 
     return H[component]
 
 
-def eig_vec(t, s):
-    """
-    find eigenvector
-
-    Args:
-        t (float): time
-        s (string): "upper" or "lower" state
-
-    Returns:
-        ndarray: eigenvector
-    """
-    E_1 = math.sqrt(H(t, "x")**2 + H(t, "y")**2 + H(t, "z")**2)  # 断熱エネルギー
-
-    # 下の断熱状態を求めるときは断熱エネルギーを符号反転する
-    if s == "lower":
-        E_1 = -E_1
-
-    eig_vec = np.array([H(t, "x") - H(t, "y")*1j, E_1 - H(t, "z")])
-    eig_vec /= np.linalg.norm(eig_vec)  # normalization
-    return eig_vec
-
-
 def func_psi(t, var):
-    """
-    state vector
-
-    (t_f)における系の状態ベクトル(psi(t_f))を求める関数です。
-    psiの第1成分をa+ib, 第2成分をc*idとします。
-    var[0]=a,var[1]=b, var[2]=c, var[3]=dとします。
-
-    Args:
-        t (float): time
-        var (list): 状態ベクトルの各成分を要素とするlist
-
-    Returns:
-        list: 微分方程式
-    """
-    dadt = (1/h)*(H(t, "x")*var[3] - H(t, "y")*var[2] + H(t, "z")*var[1])
-    dbdt = (-1/h)*(H(t, "x")*var[2] + H(t, "y")*var[3] + H(t, "z")*var[0])
-    dcdt = (1/h)*(H(t, "x")*var[1] + H(t, "y")*var[0] - H(t, "z")*var[3])
-    dddt = (-1/h)*(H(t, "x")*var[0] - H(t, "y")*var[1] - H(t, "z")*var[2])
-
-    return [dadt, dbdt, dcdt, dddt]
+    return func_psi_module(t, H, var)
 
 
 # 各Fにおけるpsiの時間発展を計算し，t_fにおけるpsiとFをvar_fに追加する。
-var_init_tmp = eig_vec(t_i, "upper").tolist()
+var_init_tmp = eig_vec(t_i, H, "upper").tolist()
 var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
             var_init_tmp[1].real, var_init_tmp[1].imag]
 var_list = solve_ivp(func_psi, [t_i, t_f], var_init, method="LSODA",
@@ -125,7 +71,7 @@ for i in range(n):
     d = var_list.y[3][i]
     psi = np.array([[a+b*1j],
                     [c+d*1j]])  # state vector
-    q_f = eig_vec(var_list.t[i], "lower")  # final state
+    q_f = eig_vec(var_list.t[i], H, "lower")  # final state
     dot = np.vdot(q_f, psi)
     OP = abs(dot)**2  # occupation probability
     OP_list.append(OP)
