@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def param_sweep(t, F):
+def q(t, F):
     """
     define parameter sweep
 
@@ -32,7 +32,7 @@ def phi_dot(t, Ham):
     return num / (den + 1e-4)
 
 
-def adia_eng(t, Ham, F, ut=False, real=False):
+def adia_eng(t, Ham, ut=False, real=False, F=None):
     """define adiabatic energy
 
     Args:
@@ -88,7 +88,7 @@ def TLZ_theoretical(v, F, m, k):
     return np.exp(TLZ)
 
 
-def func_psi(t, Ham, var, h=1):
+def func_psi_module(t, Ham, var, h=1):
     """
     state vector
 
@@ -112,4 +112,4 @@ def func_psi(t, Ham, var, h=1):
 
 
 if __name__ == '__main__':
-    print(param_sweep(1, 1))
+    print(q(1, 1))
