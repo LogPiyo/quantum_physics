@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import quad
 
 # parameter
-v_values = np.linspace(-200, 200, 400)  # energy slope
+v_values = np.linspace(-200, 200, 50)  # energy slope
 m = 4  # minimal energy gap
 k = 0.1  # geodesic curvature
 
@@ -26,7 +26,7 @@ TP_list = []  # transition probability
 
 
 def TLZ_theoretical(v):
-    TLZ = -math.pi * (m + k*v*F/4)**2 / (abs(v) * abs(F))
+    TLZ = -math.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
     return np.exp(TLZ)
 
 
@@ -138,12 +138,13 @@ for v in v_values:
     TP = math.exp(log_TP)
     TP_list.append(TP)
 
+# %%
 # v_values = v_values[abs(v_values) >= 0.07]  # avoid Integration Warning
-plt.plot(v_values, TP_list, label="numerical", color="tab:red")
-plt.plot(v_values, TLZ_theoretical(v_values),
-         linestyle=":", label="theoretical")
+plt.plot(v_values, TP_list, label="numerical", color="tab:blue", linestyle="None", marker="x")
+plt.plot(v_values, TLZ_theoretical(v_values), label="theoretical", color="tab:red")
 plt.xlabel(r"energy slope $\epsilon_0$")
 plt.ylabel(r"transition probability $P$")
+plt.title(rf"$\Delta_Z = {m}, \omega = {-F}$")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()

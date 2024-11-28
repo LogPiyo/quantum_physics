@@ -30,7 +30,8 @@ h = 1  # Dirac constant (should not change, initial value: 1)
 n = 500  # step
 OP_list = []  # ocupation probability
 Stokes_val = []
-Stokes_val_LZ = []
+Stokes_val_thr_TLZ = []
+Stokes_val_thr_LZ = []
 t_eval = np.linspace(t_i, t_f, n)  # time
 
 
@@ -212,7 +213,7 @@ def func_psi(t, var):
 
 
 def adia_param(v):
-    return m**2 / (2 * abs(v) * abs(F))
+    return (m - k * v * F / 4)**2 / (2 * abs(v) * abs(F))
 
 
 def Stokes_phase(v):
@@ -310,16 +311,25 @@ for initial_v in [-5, 5]:
 print("completed")
 
 for v in v_val:
-    Stokes_val_LZ.append(Stokes_phase(v))
+    Stokes_val_thr_TLZ.append(Stokes_phase(v))
+
+k_tmp = k
+k = 0
+for v in v_val:
+    Stokes_val_thr_LZ.append(Stokes_phase(v))
+
+k = k_tmp
 
 # %%[markdown]
 # グラフの設定
 
 # %%
-plt.plot(v_val, Stokes_val, linestyle="None", marker="x", label=r"$D_y = 45$")
-plt.plot(v_val, Stokes_val_LZ, label=r"$D_y = 0$")
-plt.xlabel(r"energy slope $\epsilon_0$")
-plt.ylabel(r"Stokes phase $\psi_s$")
+plt.plot(v_val, Stokes_val, linestyle="None", marker="x", label=rf"$\Delta_y = {"{:.0f}".format(v**2 * k / 4)}$")
+plt.plot(v_val, Stokes_val_thr_TLZ, label=rf"$\Delta_y = {"{:.0f}".format(v**2 * k / 4)}$", color="tab:green")
+plt.plot(v_val, Stokes_val_thr_LZ, label=r"$\Delta_y = 0$", color="tab:orange")
+plt.xlabel(r"energy slope $\varepsilon_0$")
+plt.ylabel(r"Stokes phase $\varphi_s$")
+plt.title(rf"$\Delta_z = {m}, \omega = {-F}$")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
