@@ -9,10 +9,10 @@ def q(t, F):
 
     Args:
         t (float): time
-        F (float): sweep speed
+        F (float): sweep speed (adiabatic parameter)
 
     Returns:
-        float: parametersweep
+        float: parameter sweep
     """
     return -F * t
 
@@ -23,6 +23,7 @@ def phi_dot(t, Ham, eps=0):
 
     Args:
         t (complex): time
+        eps (float): epsilon
 
     Returns:
         float: derivative of azimuthal angle
@@ -40,6 +41,7 @@ def adia_eng(t, Ham, ut=False, real=False, F=None):
         Ham (function): Hamiltonian
         ut (bool, optional): unitary transformed. Defaults to False.
         real (bool, optional): real part. Defaults to False.
+        F (float, optional): sweep speed. If `ut=True`, this parameter must be specified. Defaults to None.
 
     Returns:
         complex: adiabatic energy
@@ -99,6 +101,7 @@ def func_psi_module(t, Ham, var, h=1):
     Args:
         t (float): time
         var (list): 状態ベクトルの各成分を要素とするlist
+        h (float, optional): Dirac constant. Default to 1.
 
     Returns:
         list: 微分方程式
