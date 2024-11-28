@@ -4,12 +4,14 @@
 
 # %%
 # multiple-passage TLZ modelにおける断熱状態の占有確率を数値計算結果と理論値で比較する
+import _pathmagic # noqa
 import math
 import cmath
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
+from my_module.function import q, adia_eng, func_psi_module, adia_param, eig_vec
 from scipy.integrate import solve_ivp, quad
 
 
@@ -35,41 +37,7 @@ Stokes_val_thr_LZ = []
 t_eval = np.linspace(t_i, t_f, n)  # time
 
 
-def q(t):
-    """
-    define parameter sweep q
-
-    q = adiabatic parameter * time
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: q
-    """
-    return -F * t
-
-
-def H(t, component):
-    """Hamiltonianの設定(実数のみ)
-
-    Args:
-        t (float): time
-        component (string): 成分
-
-    Returns:
-        float: 時刻tにおけるcomponentで指定した成分を返す。
-    """
-    H = {}
-
-    H['x'] = -v * math.cos(q(t))
-    H['y'] = -0.125 * k * v**2 * math.sin(2 * q(t))**2
-    H['z'] = m * math.sin(q(t))
-
-    return H[component]
-
-
-def Hc(t, component):
+def Hc(t, component, real=False):
     """
     Hamiltonianの設定(複素数対応)
 
@@ -82,60 +50,17 @@ def Hc(t, component):
     """
     H = {}
 
-    H['x'] = -v * cmath.cos(q(t))
-    H['y'] = -0.125 * k * v**2 * cmath.sin(2 * q(t))**2
-    H['z'] = m * cmath.sin(q(t))
-    H['x_dot'] = v * cmath.sin(q(t))
-    H['y_dot'] = -0.125 * k * v**2 * 4 * cmath.sin(2 * q(t)) * cmath.cos(2 * q(t))
-    H['z_dot'] = m * cmath.cos(q(t))
+    H['x'] = -v * cmath.cos(q(t, F))
+    H['y'] = -0.125 * k * v**2 * cmath.sin(2 * q(t, F))**2
+    H['z'] = m * cmath.sin(q(t, F))
+    H['x_dot'] = v * cmath.sin(q(t, F))
+    H['y_dot'] = -0.125 * k * v**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
+    H['z_dot'] = m * cmath.cos(q(t, F))
 
-    return H[component]
-
-
-def E_plus(t):
-    """
-    adiabatic energy
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: adiabatic enegy
-    """
-    E_plus = cmath.sqrt(Hc(t, "x")**2 + Hc(t, "y")**2 + Hc(t, "z")**2)
-    return E_plus
-
-
-def phi_dot(t):
-    """
-    approximate form of phi dot
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: phi dot (approximated)
-    """
-    num = -Hc(t, "x") * Hc(t, "y_dot") + Hc(t, "x_dot") * Hc(t, "y")
-    den = Hc(t, "x")**2 + Hc(t, "y")**2
-    return num / den
-
-
-def E_plus_unitary_transformed(t):
-    """
-    adiabatic energy (unitary transformed)
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: adiabatic enegy (unitary transformed)
-    """
-    X = Hc(t, "x")
-    Y = Hc(t, "y")
-    Z = Hc(t, "z")
-    phi_d = phi_dot(t)
-    return cmath.sqrt(X**2 + Y**2 + (Z + 0.5 * (-F) * phi_d)**2)
+    if real:
+        return H[component].real
+    else:
+        return H[component]
 
 
 def Re_E(t):
@@ -148,76 +73,32 @@ def Re_E(t):
     Returns:
         float: adiabatic energy
     """
-    Integrand = E_plus_unitary_transformed(tp_1 + 1j * t)
+    Integrand = adia_eng(tp_1 + 1j * t, Hc, ut=True, F=F)
     return Integrand.real
 
 
 def Im_E_1(t):
-    Integrand = E_plus_unitary_transformed(tp_1 + 1j * t)
+    Integrand = adia_eng(tp_1 + 1j * t, Hc, ut=True, F=F)
     return Integrand.imag
 
 
 def Im_E_2(t):
-    Integrand = E_plus_unitary_transformed(tp_2 + 1j * t)
+    Integrand = adia_eng(tp_2 + 1j * t, Hc, ut=True, F=F)
     return Integrand.imag
 
 
 def E_3(t):
-    Integrand = E_plus_unitary_transformed(t)
+    Integrand = adia_eng(t, Hc, ut=True, F=F)
     return Integrand.real
 
 
-def eig_vec(t, s):
-    """
-    eigenvector
-
-    Args:
-        t (float): time
-        s (state): upper or lower
-
-    Returns:
-        array: eigenvector
-    """
-    energy = math.sqrt(H(t, "x")**2 + H(t, "y")**2 + H(t, "z")**2)  # 断熱エネルギー
-
-    # 下の断熱状態を求めるときは断熱エネルギーを符号反転する
-    if s == "lower":
-        energy = -energy
-
-    eig_vec = np.array([H(t, "x") - H(t, "y") * 1j, energy - H(t, "z")])
-    eig_vec /= np.linalg.norm(eig_vec)  # normalization
-    return eig_vec
-
-
 def func_psi(t, var):
-    """
-    state vector
-
-    (t_f)における系の状態ベクトル(psi(t_f))を求める関数です。
-    psiの第1成分をa+ib, 第2成分をc*idとします。
-    var[0]=a,var[1]=b, var[2]=c, var[3]=dとします。
-
-    Args:
-        t (float): time
-        var (list): 状態ベクトルの各成分を要素とするlist
-
-    Returns:
-        list: 微分方程式
-    """
-    dadt = (1/h)*(H(t, "x")*var[3] - H(t, "y")*var[2] + H(t, "z")*var[1])
-    dbdt = (-1/h)*(H(t, "x")*var[2] + H(t, "y")*var[3] + H(t, "z")*var[0])
-    dcdt = (1/h)*(H(t, "x")*var[1] + H(t, "y")*var[0] - H(t, "z")*var[3])
-    dddt = (-1/h)*(H(t, "x")*var[0] - H(t, "y")*var[1] - H(t, "z")*var[2])
-
-    return [dadt, dbdt, dcdt, dddt]
-
-
-def adia_param(v):
-    return (m - k * v * F / 4)**2 / (2 * abs(v) * abs(F))
+    return func_psi_module(t, Hc, var)
 
 
 def Stokes_phase(v):
-    delta = adia_param(v)
+    delta = adia_param(v, F, m, k)
+
     term1 = math.pi / 4
     term2 = delta * (math.log(delta) - 1)
     term3 = cmath.phase(scipy.special.gamma(1 - 1j * delta))
@@ -270,7 +151,7 @@ for initial_v in [-5, 5]:
             phase_term3, _ = quad(E_3, ll_E_3, ul_E_3)
             phase_term3 *= (-F) / abs(F)
 
-            var_init_tmp = eig_vec(t_i, "upper").tolist()  # initial state
+            var_init_tmp = eig_vec(t_i, Hc, "upper").tolist()  # initial state
             var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
                         var_init_tmp[1].real, var_init_tmp[1].imag]
             var_list = solve_ivp(func_psi, [t_i, t_f], var_init, method="LSODA",
@@ -284,7 +165,7 @@ for initial_v in [-5, 5]:
                                 [c + d*1j]])  # 波動関数
 
                 # 断熱状態に指定
-                q_f = eig_vec(var_list.t[i], "lower")  # final state
+                q_f = eig_vec(var_list.t[i], Hc, "lower")  # final state
 
                 PA = np.vdot(q_f, psi)  # probability amplitude
                 OP = abs(PA)**2  # ocupation probability
