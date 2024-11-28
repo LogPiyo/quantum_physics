@@ -106,10 +106,15 @@ def func_psi_module(t, Ham, var, h=1):
     Returns:
         list: 微分方程式
     """
-    dadt = (1/h) * (Ham(t, "x")*var[3] - Ham(t, "y")*var[2] + Ham(t, "z")*var[1])
-    dbdt = (-1/h) * (Ham(t, "x")*var[2] + Ham(t, "y")*var[3] + Ham(t, "z")*var[0])
-    dcdt = (1/h) * (Ham(t, "x")*var[1] + Ham(t, "y")*var[0] - Ham(t, "z")*var[3])
-    dddt = (-1/h) * (Ham(t, "x")*var[0] - Ham(t, "y")*var[1] - Ham(t, "z")*var[2])
+
+    H_x = Ham(t, "x", real=True)
+    H_y = Ham(t, "y", real=True)
+    H_z = Ham(t, "z", real=True)
+
+    dadt = (1/h) * (H_x*var[3] - H_y*var[2] + H_z*var[1])
+    dbdt = (-1/h) * (H_x*var[2] + H_y*var[3] + H_z*var[0])
+    dcdt = (1/h) * (H_x*var[1] + H_y*var[0] - H_z*var[3])
+    dddt = (-1/h) * (H_x*var[0] - H_y*var[1] - H_z*var[2])
 
     return [dadt, dbdt, dcdt, dddt]
 
