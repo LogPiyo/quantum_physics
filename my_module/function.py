@@ -17,7 +17,7 @@ def q(t, F):
     return -F * t
 
 
-def phi_dot(t, Ham):
+def phi_dot(t, Ham, eps=0):
     """
     define derivative of azimuthal angle
 
@@ -29,7 +29,7 @@ def phi_dot(t, Ham):
     """
     num = -Ham(t, "x") * Ham(t, "y_dot") + Ham(t, "x_dot") * Ham(t, "y")
     den = Ham(t, "x")**2 + Ham(t, "y")**2
-    return num / (den + 1e-4)
+    return num / (den + eps)
 
 
 def adia_eng(t, Ham, ut=False, real=False, F=None):
