@@ -5,11 +5,13 @@
 # - 現状Integration Warningが出ます。→調査中
 
 # %%
+import _pathmagic # noqa
 import math
 import cmath
 import numpy as np
 import matplotlib.pyplot as plt
 
+from my_module.function import TLZ_theoretical, q, adia_eng
 from scipy.integrate import quad
 
 # parameter
@@ -21,26 +23,6 @@ k = 1  # geodesic curvature
 h = 1  # Dirac constant (should not change)
 F = -1  # sweep speed (should not change)(時間反転させないため)
 TP_list = []  # transition probability
-
-
-def TLZ_theoretical(v):
-    TLZ = -math.pi * (m + k*v*F/4)**2 / (abs(v) * abs(F))
-    return np.exp(TLZ)
-
-
-def q(t):
-    """
-    define parameter sweep q
-
-    q = adiabatic parameter * time
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: q
-    """
-    return -F * t
 
 
 def Hc(t, component):
@@ -57,48 +39,16 @@ def Hc(t, component):
     """
     H = {}
 
-    H['x'] = -v * cmath.cos(q(t))
-    H['y'] = 0.25 * k * v**2 * cmath.cos(q(t)) * cmath.sin(2*q(t))
-    H['z'] = m * cmath.sin(q(t))
-    H['x_dot'] = v * cmath.sin(q(t))
+    H['x'] = -v * cmath.cos(q(t, F))
+    H['y'] = 0.25 * k * v**2 * cmath.cos(q(t, F)) * cmath.sin(2*q(t, F))
+    H['z'] = m * cmath.sin(q(t, F))
+    H['x_dot'] = v * cmath.sin(q(t, F))
     H['y_dot'] = (0.25 * k * v**2
-                  * (-cmath.sin(q(t))*cmath.sin(2*q(t))
-                     + 2*cmath.cos(q(t))*cmath.cos(2*q(t))))
-    H['z_dot'] = m * cmath.cos(q(t))
+                  * (-cmath.sin(q(t, F))*cmath.sin(2*q(t, F))
+                     + 2*cmath.cos(q(t, F))*cmath.cos(2*q(t, F))))
+    H['z_dot'] = m * cmath.cos(q(t, F))
 
     return H[component]
-
-
-def phi_dot(t):
-    """
-    define derivative of azimuthal angle with respect to parameter sweep
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: derivative of azimuthal angle with respect to parameter sweep
-    """
-    num = -Hc(t, "x")*Hc(t, "y_dot") + Hc(t, "x_dot")*Hc(t, "y")
-    den = Hc(t, "x")**2 + Hc(t, "y")**2
-    return num / den
-
-
-def E_plus_unitary_transformed(t):
-    """
-    define adiabatic energy (unitary transformed)
-
-    Args:
-        t (float): time
-
-    Returns:
-        float: adiabatic energy (unitary transformed)
-    """
-    X = Hc(t, "x")
-    Y = Hc(t, "y")
-    Z = Hc(t, "z")
-    phi_d = phi_dot(t)
-    return cmath.sqrt(X**2 + Y**2 + (Z + 0.5*(-F)*phi_d)**2)
 
 
 def Re_E(t):
@@ -111,7 +61,7 @@ def Re_E(t):
     Returns:
         float: real part of adiabatic energy (unitary transformed)
     """
-    Integrand = E_plus_unitary_transformed(tp + 1j*t)
+    Integrand = adia_eng(tp + 1j*t, Hc, ut=True, F=F)
     return Integrand.real
 
 
@@ -136,10 +86,8 @@ for v in v_values:
 
 v_values = v_values[abs(v_values) >= 0.03]  # avoid Integration Warning
 plt.plot(v_values, TP_list, label="numerical")
-plt.plot(v_values, TLZ_theoretical(v_values),
+plt.plot(v_values, TLZ_theoretical(v_values, F, m, k),
          linestyle=":", label="theoretical")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
-
-# %%
