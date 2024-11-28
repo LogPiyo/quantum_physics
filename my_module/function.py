@@ -84,7 +84,7 @@ def adia_param(v, F, m, k):
 
 
 def TLZ_theoretical(v, F, m, k):
-    TLZ = -np.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
+    TLZ = -np.pi * (m + k*v*F/4)**2 / (abs(v) * abs(F))
     return np.exp(TLZ)
 
 
