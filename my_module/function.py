@@ -57,7 +57,10 @@ def adia_eng(t, Ham, ut=False, real=False, F=None):
     phi_d = phi_dot(t, Ham)
 
     if ut:
-        return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-F) * phi_d)**2)
+        if F is None:
+            raise ValueError("if `ut` is `True`, the argument 'F' must be specified.")
+        else:
+            return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-F) * phi_d)**2)
     elif real:
         return np.sqrt(H_x**2 + H_y**2 + H_z**2).real
     else:
