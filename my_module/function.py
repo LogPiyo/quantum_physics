@@ -9,27 +9,33 @@ def q(t, F):
 
     Args:
         t (float): time
-        F (float): sweep speed
+        F (float): sweep speed (adiabatic parameter)
 
     Returns:
-        float: parametersweep
+        float: parameter sweep
     """
     return -F * t
 
 
-def phi_dot(t, Ham):
+def phi_dot(t, Ham, eps=0):
     """
     define derivative of azimuthal angle
 
     Args:
         t (complex): time
+        eps (float): epsilon
 
     Returns:
         float: derivative of azimuthal angle
     """
-    num = -Ham(t, "x") * Ham(t, "y_dot") + Ham(t, "x_dot") * Ham(t, "y")
-    den = Ham(t, "x")**2 + Ham(t, "y")**2
-    return num / (den + 1e-4)
+    H_x = Ham(t, "x")
+    H_y = Ham(t, "y")
+    H_x_dot = Ham(t, "x_dot")
+    H_y_dot = Ham(t, "y_dot")
+
+    num = -H_x * H_y_dot + H_x_dot * H_y
+    den = H_x**2 + H_y**2
+    return num / (den + eps)
 
 
 def adia_eng(t, Ham, ut=False, real=False, F=None):
@@ -40,20 +46,25 @@ def adia_eng(t, Ham, ut=False, real=False, F=None):
         Ham (function): Hamiltonian
         ut (bool, optional): unitary transformed. Defaults to False.
         real (bool, optional): real part. Defaults to False.
+        F (float, optional): sweep speed. If `ut=True`, this parameter must be specified. Defaults to None.
 
     Returns:
         complex: adiabatic energy
     """
-    Ham_x = Ham(t, "x")
-    Ham_y = Ham(t, "y")
-    Ham_z = Ham(t, "z")
+    H_x = Ham(t, "x")
+    H_y = Ham(t, "y")
+    H_z = Ham(t, "z")
     phi_d = phi_dot(t, Ham)
 
     if ut:
-        return np.sqrt(Ham_x**2 + Ham_y**2 + (Ham_z + 0.5*(-F)*phi_d)**2)
+        if F is None:
+            raise ValueError("if `ut` is `True`, the argument 'F' must be specified.")
+        else:
+            return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-F) * phi_d)**2)
     elif real:
-        return np.sqrt(Ham_x**2 + Ham_y**2 + Ham_z**2)
-    return np.sqrt(Ham_x**2 + Ham_y**2 + Ham_z**2)
+        return np.sqrt(H_x**2 + H_y**2 + H_z**2).real
+    else:
+        return np.sqrt(H_x**2 + H_y**2 + H_z**2)
 
 
 def eig_vec(t, Ham, s):
@@ -68,13 +79,16 @@ def eig_vec(t, Ham, s):
     Returns:
         array: eigenvector
     """
-    energy = adia_eng(t, Ham, real=True)
+    H_x = Ham(t, "x", real=True)
+    H_y = Ham(t, "y", real=True)
+    H_z = Ham(t, "z", real=True)
+    adia_energy = adia_eng(t, Ham, real=True)
 
     # lower stateを求めるときは断熱エネルギーを符号反転する
     if s == "lower":
-        energy = -energy
+        adia_energy = -adia_energy
 
-    eig_vec = np.array([Ham(t, "x", real=True) - Ham(t, "y", real=True) * 1j, energy - Ham(t, "z", real=True)])
+    eig_vec = np.array([H_x - H_y * 1j, adia_energy - H_z])
     eig_vec /= np.linalg.norm(eig_vec)  # normalization
     return eig_vec
 
@@ -84,7 +98,7 @@ def adia_param(v, F, m, k):
 
 
 def TLZ_theoretical(v, F, m, k):
-    TLZ = -np.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
+    TLZ = -np.pi * (m + k * v * F / 4)**2 / (abs(v) * abs(F))
     return np.exp(TLZ)
 
 
@@ -99,14 +113,20 @@ def func_psi_module(t, Ham, var, h=1):
     Args:
         t (float): time
         var (list): 状態ベクトルの各成分を要素とするlist
+        h (float, optional): Dirac constant. Default to 1.
 
     Returns:
         list: 微分方程式
     """
-    dadt = (1/h) * (Ham(t, "x")*var[3] - Ham(t, "y")*var[2] + Ham(t, "z")*var[1])
-    dbdt = (-1/h) * (Ham(t, "x")*var[2] + Ham(t, "y")*var[3] + Ham(t, "z")*var[0])
-    dcdt = (1/h) * (Ham(t, "x")*var[1] + Ham(t, "y")*var[0] - Ham(t, "z")*var[3])
-    dddt = (-1/h) * (Ham(t, "x")*var[0] - Ham(t, "y")*var[1] - Ham(t, "z")*var[2])
+
+    H_x = Ham(t, "x", real=True)
+    H_y = Ham(t, "y", real=True)
+    H_z = Ham(t, "z", real=True)
+
+    dadt = (+1 / h) * (H_x * var[3] - H_y * var[2] + H_z * var[1])
+    dbdt = (-1 / h) * (H_x * var[2] + H_y * var[3] + H_z * var[0])
+    dcdt = (+1 / h) * (H_x * var[1] + H_y * var[0] - H_z * var[3])
+    dddt = (-1 / h) * (H_x * var[0] - H_y * var[1] - H_z * var[2])
 
     return [dadt, dbdt, dcdt, dddt]
 
