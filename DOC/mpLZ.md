@@ -22,8 +22,36 @@ H_\mathrm{MTLZ}(t)
 ```
 で与えられます。
 
-## 遷移確率の導出法
+## Stückelberg公式
+特に，
+```math
+\begin{align*}
+P_2
+&= q \left(\frac{\sin 2\xi}{\cos \xi}\right)^2 \\
+&= 4 q \sin^2 \xi \\
+&= 4 q (1-q) \sin^2(\theta + \phi_s)
+\end{align*}
+```
+はStückelberg公式と呼ぶことがあります。
 
+## 他のモデルとの関係
+### 特別な場合
+| 条件 | 一致するモデル |
+| --- | ------------ |
+|$`t = n \pi/2\omega \, (n \in \mathbb{N})`$近傍で展開|[Landau-Zenerモデル](Landau_Zener.md)|
+
+#### 参考) 最高次までのTaylor展開の表
+
+| 関数 | $`x = -\frac{\pi}{2}`$ | $`x = \frac{\pi}{2}`$
+| -- | -- | -- |
+| $`\sin(x)`$ | $`-1`$ | $`1`$
+| $`\cos(x)`$ | $`\left(x + \frac{\pi}{2} \right)`$| $`- \left(x - \frac{\pi}{2} \right)`$
+| $`\sin^2(2x)`$ | $`4 \left(x - \frac{\pi}{2} \right)^2`$ | $`4 \left(x + \frac{\pi}{2} \right)^2`$
+
+### 本モデルを一般化したモデル
+- [multiple-passage twisted Landau-Zenerモデル]()
+
+## 遷移確率の導出法
 $C(t) =\sin \omega t$のとき，Hamiltonianは，
 ```math
 \hat{H}
@@ -210,15 +238,3 @@ S^n = \alpha_n + \beta_n S
 \end{align*}
 ```
 です。
-
-## Stückelberg公式
-特に，
-```math
-\begin{align*}
-P_2
-&= q \left(\frac{\sin 2\xi}{\cos \xi}\right)^2 \\
-&= 4 q \sin^2 \xi \\
-&= 4 q (1-q) \sin^2(\theta + \phi_s)
-\end{align*}
-```
-はStückelberg公式と呼ぶことがあります。

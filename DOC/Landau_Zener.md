@@ -15,6 +15,13 @@ H
 ```
 で与えられます (Landau-Zener公式)。
 
+## 他のモデルとの関係
+### 本モデルを一般化したモデル
+- [twisted Landau-Zenerモデル](/DOC/TLZ.md)
+  - $`y`$成分を追加したモデル
+- [multiple-passage Landau-Zenerモデル](/DOC/mpLZ.md)
+  - LZモデルを複数回繰り返すモデル
+
 ## 証明方法
 Landau-Zener公式は，1932年に，Majorana，Landau，Zener，Stückelbergによって独立に導出されました。
 
@@ -25,7 +32,3 @@ Landau-Zener公式は，1932年に，Majorana，Landau，Zener，Stückelbergに
 |Landau|Dykhne公式|不可|coming soon|
 |Zener|Weberの微分方程式，放物柱関数|可|[こちら](/DOC/Zener.md)|
 |Stückelberg|WKB近似|不可|coming soon|
-
-### Landau-Zenerモデルを拡張したモデル
-- [twisted Landau-Zenerモデル](/DOC/TLZ.md)
-- [multiple-passage Landau-Zenerモデル](/DOC/mpLZ.md)

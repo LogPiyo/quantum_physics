@@ -83,9 +83,7 @@ twisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微
     \sqrt{(\nu F t)^2 + (\frac{1}{2} \kappa_{||} \nu^2 (F t)^2)^2} & -m
 \end{pmatrix}
 ```
-をtwisted Landau-Zenerモデルと呼びます。
-
-- 特に$`\Delta_y = 0`$のとき，Landau-Zenerモデルと呼びます。
+をtwisted Landau-Zenerモデルと呼びます。詳しくは[こちら](DOC/TLZ.md)を参照してください。
 
 ## multiple-passage twisted Landau-Zenerモデル
 ```math
@@ -96,18 +94,7 @@ H_\mathrm{MTLZ}(t)
 -\varepsilon_0 \cos \omega t - i \frac{1}{2} \Delta_y \sin^2 (2 \omega t) & -\Delta_z \sin \omega t
 \end{pmatrix}
 ```
-をmultiple-passage twisted Landau-Zenerモデルと呼びます。
-
-- 特に$`\Delta_y = 0`$のとき，multiple-passage Landau-Zenerモデルと呼びます。<br>
-- このモデルは，$`t = n \pi/2\omega \, (n \in \mathbb{N})`$近傍でtwisted Landau-Zenerモデルとみなすことができます。
-
-### 参考) 最高次までのTaylor展開の表
-
-| 関数 | $`x = -\frac{\pi}{2}`$ | $`x = \frac{\pi}{2}`$
-| -- | -- | -- |
-| $`\sin(x)`$ | $`-1`$ | $`1`$
-| $`\cos(x)`$ | $`\left(x + \frac{\pi}{2} \right)`$| $`- \left(x - \frac{\pi}{2} \right)`$
-| $`\sin^2(2x)`$ | $`4 \left(x - \frac{\pi}{2} \right)^2`$ | $`4 \left(x + \frac{\pi}{2} \right)^2`$
+をmultiple-passage twisted Landau-Zenerモデルと呼びます。詳しくは[こちら](DOC/mpTLZ.md)を参照してください。
 
 ### 図1 断熱エネルギーの時間発展
 <img src="resources/MTLZ_Hamiltonian.jpg" alt="MTLZ Hamitonianの概要" width=400>
@@ -128,10 +115,7 @@ H_\mathrm{MTLZ}(t)
 
 
 # 参考文献
-- L. Lim, J. Fuchs and G. Montambaux, Phys. Rev. A **91**, 042119 (2015).
-- M. V. Berry, Proc. R. Soc. Lond. A **430**, 405 (1990).
-- Y. Kayanuma, Phys. Rev. A **55**, 2495 (1997).
-- S. Takayoshi, J. Wu and T. Oka, SciPost Phys. **11**, 075 (2021).
+[こちら](DOC/thesis_list.md)を参照してください。
 
 # .pyファイルを.ipynbのように扱う
 本レポジトリ内の`.py`ファイルは，
