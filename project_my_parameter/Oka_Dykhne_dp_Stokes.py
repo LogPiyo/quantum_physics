@@ -16,8 +16,8 @@ from scipy.integrate import solve_ivp, quad
 
 
 # parameter
-v_val = np.linspace(-100, 100, 50)  # energy slope
-v_val = v_val[(v_val >= 5) | (v_val <= -5)]
+eps_0_val = np.linspace(-100, 100, 50)  # energy slope
+eps_0_val = eps_0_val[(eps_0_val >= 5) | (eps_0_val <= -5)]
 D_z = 4  # minimal energy gap
 k = 0.1  # geodesic curvature
 F = -1  # sweep speed (should not change)(default value: -1)(時間反転させないため)
@@ -50,11 +50,11 @@ def Hc(t, component, real=False):
     """
     H = {}
 
-    H['x'] = -v * cmath.cos(q(t, F))
-    H['y'] = -0.125 * k * v**2 * cmath.sin(2 * q(t, F))**2
+    H['x'] = -eps_0 * cmath.cos(q(t, F))
+    H['y'] = -0.125 * k * eps_0**2 * cmath.sin(2 * q(t, F))**2
     H['z'] = D_z * cmath.sin(q(t, F))
-    H['x_dot'] = v * cmath.sin(q(t, F))
-    H['y_dot'] = -0.125 * k * v**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
+    H['x_dot'] = eps_0 * cmath.sin(q(t, F))
+    H['y_dot'] = -0.125 * k * eps_0**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
     H['z_dot'] = D_z * cmath.cos(q(t, F))
 
     if real:
@@ -96,8 +96,8 @@ def func_psi(t, var):
     return func_psi_module(t, Hc, var)
 
 
-def Stokes_phase(v):
-    delta = adia_param(v, F, D_z, k)
+def Stokes_phase(eps_0):
+    delta = adia_param(eps_0, F, D_z, k)
 
     term1 = math.pi / 4
     term2 = delta * (math.log(delta) - 1)
@@ -111,21 +111,21 @@ for initial_v in [-5, 5]:
 
     if initial_v < 0:  # start from v = -5
         # v_val_find_Stokes is [-2, -4, -6, ...]
-        v_val_find_Stokes = v_val[v_val < 0]
+        v_val_find_Stokes = eps_0_val[eps_0_val < 0]
         v_val_find_Stokes = v_val_find_Stokes[:: -1]
 
     else:  # start from v = 5
         # v_val_find_Stokes is [2, 4, 6, ...]
-        v_val_find_Stokes = v_val[v_val > 0]
+        v_val_find_Stokes = eps_0_val[eps_0_val > 0]
 
-    for v in v_val_find_Stokes:
+    for eps_0 in v_val_find_Stokes:
         ans_phi_s = 0
         min_error = 10
         for d_phi_s in np.linspace(-0.1, 0.1, 10):
             phi_s = prev_ans_phi_s + d_phi_s  # Stokes phase(弧度法)
-            TLZ = -math.pi * (D_z - k*v*F/4)**2 / (abs(v) * abs(F))
+            TLZ = -math.pi * (D_z - k*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
             # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
-            zero_approx = abs(D_z - k*abs(v)*F/4) / (abs(v) * (-F))
+            zero_approx = abs(D_z - k*abs(eps_0)*F/4) / (abs(eps_0) * (-F))
 
             # integral of Re_E
             ll_Re_E = 0  # lower limit
@@ -183,7 +183,7 @@ for initial_v in [-5, 5]:
                 min_error = err
                 ans_phi_s = phi_s
 
-        print("v = ", v, "Stokes = ", ans_phi_s, "error = ", min_error)
+        print("v = ", eps_0, "Stokes = ", ans_phi_s, "error = ", min_error)
         prev_ans_phi_s = ans_phi_s  # 1つ前の点を基準にする
         Stokes_val.append(ans_phi_s)
 
@@ -191,13 +191,13 @@ for initial_v in [-5, 5]:
         Stokes_val = Stokes_val[:: -1]
 print("completed")
 
-for v in v_val:
-    Stokes_val_thr_TLZ.append(Stokes_phase(v))
+for eps_0 in eps_0_val:
+    Stokes_val_thr_TLZ.append(Stokes_phase(eps_0))
 
 k_tmp = k
 k = 0
-for v in v_val:
-    Stokes_val_thr_LZ.append(Stokes_phase(v))
+for eps_0 in eps_0_val:
+    Stokes_val_thr_LZ.append(Stokes_phase(eps_0))
 
 k = k_tmp
 
@@ -205,9 +205,9 @@ k = k_tmp
 # グラフの設定
 
 # %%
-plt.plot(v_val, Stokes_val, linestyle="None", marker="x", label=rf"$\Delta_y = {"{:.0f}".format(v**2 * k / 4)}$")
-plt.plot(v_val, Stokes_val_thr_TLZ, label=rf"$\Delta_y = {"{:.0f}".format(v**2 * k / 4)}$", color="tab:green")
-plt.plot(v_val, Stokes_val_thr_LZ, label=r"$\Delta_y = 0$", color="tab:orange")
+plt.plot(eps_0_val, Stokes_val, linestyle="None", marker="x", label=rf"$\Delta_y = {"{:.0f}".format(eps_0**2 * k / 4)}$")
+plt.plot(eps_0_val, Stokes_val_thr_TLZ, label=rf"$\Delta_y = {"{:.0f}".format(eps_0**2 * k / 4)}$", color="tab:green")
+plt.plot(eps_0_val, Stokes_val_thr_LZ, label=r"$\Delta_y = 0$", color="tab:orange")
 plt.xlabel(r"energy slope $\varepsilon_0$")
 plt.ylabel(r"Stokes phase $\varphi_s$")
 plt.title(rf"$\Delta_z = {D_z}, \omega = {-F}$")

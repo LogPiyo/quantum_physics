@@ -13,7 +13,7 @@ from my_module.function import q, eig_vec, func_psi_module
 from scipy.integrate import solve_ivp
 
 # parameter
-v = 1  # energy slope
+eps_0 = 1  # energy slope
 D_z = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 F = -1  # parameter sweep (should not change)
@@ -43,11 +43,11 @@ def H(t, component, real=True):
     """
     H = {}
 
-    H['x'] = v * q(t, F)
-    H['y'] = 0.5 * k * v**2 * q(t, F)**2
+    H['x'] = eps_0 * q(t, F)
+    H['y'] = 0.5 * k * eps_0**2 * q(t, F)**2
     H['z'] = D_z
-    H['x_dot'] = v
-    H['y_dot'] = k * v**2 * q(t, F)
+    H['x_dot'] = eps_0
+    H['y_dot'] = k * eps_0**2 * q(t, F)
     H['z_dot'] = 0
 
     return H[component]
@@ -76,7 +76,7 @@ for i in range(n):
     OP = abs(dot)**2  # occupation probability
     OP_list.append(OP)
 
-TLZ = -math.pi * (D_z + k*v*F/4)**2 / (abs(v) * abs(F))
+TLZ = -math.pi * (D_z + k*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
 P_TLZ = math.exp(TLZ) + t_eval*0  # theoretical
 arr = np.array(OP_list)
 plt.plot(t_eval, arr, label="numerical")

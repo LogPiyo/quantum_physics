@@ -12,7 +12,7 @@ from my_module.function import TLZ_theoretical, q, func_psi_module, eig_vec
 from scipy.integrate import solve_ivp
 
 # parameter
-v = 1  # energy slope
+eps_0 = 1  # energy slope
 D_z = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
@@ -41,11 +41,11 @@ def H(t, component, real=True):
     """
     H = {}
 
-    H['x'] = v * q(t, F)
-    H['y'] = 0.5 * k * v**2 * q(t, F)**2
+    H['x'] = eps_0 * q(t, F)
+    H['y'] = 0.5 * k * eps_0**2 * q(t, F)**2
     H['z'] = D_z
-    H['x_dot'] = v
-    H['y_dot'] = k * v**2 * q(t, F)
+    H['x_dot'] = eps_0
+    H['y_dot'] = k * eps_0**2 * q(t, F)
     H['z_dot'] = 0
 
     return H[component]
@@ -75,7 +75,7 @@ for F in F_values:
     TP_list.append(TP)
 
 plt.plot(F_values, TP_list, label="numerical")
-plt.plot(F_values, TLZ_theoretical(v, F_values, D_z, k),
+plt.plot(F_values, TLZ_theoretical(eps_0, F_values, D_z, k),
          linestyle=":", label="theoretical")
 plt.legend()
 plt.show()

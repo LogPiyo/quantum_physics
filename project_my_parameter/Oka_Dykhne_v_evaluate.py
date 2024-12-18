@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import quad
 
 # parameter
-v_values = np.linspace(-2, 2, 100)  # energy slope
+eps_0_values = np.linspace(-2, 2, 100)  # energy slope
 D_z = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
@@ -59,11 +59,11 @@ def Hc(t, component):
     """
     H = {}
 
-    H['x'] = v * q(t)
-    H['y'] = 0.5 * k * v**2 * q(t)**2
+    H['x'] = eps_0 * q(t)
+    H['y'] = 0.5 * k * eps_0**2 * q(t)**2
     H['z'] = D_z
-    H['x_dot'] = v
-    H['y_dot'] = k * v**2 * q(t)
+    H['x_dot'] = eps_0
+    H['y_dot'] = k * eps_0**2 * q(t)
     H['z_dot'] = 0
 
     return H[component]
@@ -115,8 +115,8 @@ def Re_E(t):
     return Integrand.real
 
 
-for v in v_values:
-    zero_approx = abs(D_z + k*v*F/4) / (abs(v) * (-F))
+for eps_0 in eps_0_values:
+    zero_approx = abs(D_z + k*eps_0*F/4) / (abs(eps_0) * (-F))
     # zero of adiabatic energy (approximated)
 
     # imaginary part of integral of adiabatic energy (unitary transformed)
@@ -128,8 +128,8 @@ for v in v_values:
     TP = math.exp(log_TP)
     TP_list.append(TP)
 
-plt.plot(v_values, TP_list, label="numerical")
-plt.plot(v_values, TLZ_theoretical(v_values),
+plt.plot(eps_0_values, TP_list, label="numerical")
+plt.plot(eps_0_values, TLZ_theoretical(eps_0_values),
          linestyle=":", label="theoretical")
 plt.ylim(-0.1, 1.1)
 plt.legend()
