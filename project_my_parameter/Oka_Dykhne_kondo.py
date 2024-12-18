@@ -23,7 +23,7 @@ from scipy.integrate import quad
 # parameter
 eps_0 = 1  # energy slope
 D_z = 0.1  # minimal energy gap
-k = 1  # geodesic curvature
+D_y = 0.25  # twist strength
 
 F_values = np.linspace(-2, 2, 100)  # sweep speed
 
@@ -47,10 +47,10 @@ def Hc(t, component):
     H = {}
 
     H['x'] = -eps_0 * cmath.cos(q(t, F))
-    H['y'] = 0.25 * k * eps_0**2 * cmath.cos(q(t, F)) * cmath.sin(2*q(t, F))
+    H['y'] = 0.25 * (4 * D_y / eps_0**2) * eps_0**2 * cmath.cos(q(t, F)) * cmath.sin(2*q(t, F))
     H['z'] = D_z * cmath.sin(q(t, F))
     H['x_dot'] = eps_0 * cmath.sin(q(t, F))
-    H['y_dot'] = (0.25 * k * eps_0**2
+    H['y_dot'] = (0.25 * (4 * D_y / eps_0**2) * eps_0**2
                   * (-cmath.sin(q(t, F))*cmath.sin(2*q(t, F))
                      + 2*cmath.cos(q(t, F))*cmath.cos(2*q(t, F))))
     H['z_dot'] = D_z * cmath.cos(q(t, F))
@@ -74,7 +74,7 @@ def Re_E(t):
 
 for F in F_values:
     tp = math.pi / (2*(-F))  # transition time
-    zero_approx = abs(D_z + k*eps_0*(F)/4) / (abs(eps_0) * (-F))
+    zero_approx = abs(D_z + (4 * D_y / eps_0**2)*eps_0*(F)/4) / (abs(eps_0) * (-F))
     # zero of adiabatic energy (approximated)
 
     # imaginary part of integral of adiabatic energy (unitary transformed)
@@ -87,7 +87,7 @@ for F in F_values:
     TP_list.append(TP)
 
 plt.plot(F_values, TP_list, label="numerical")
-plt.plot(F_values, TLZ_theoretical(eps_0, F_values, D_z, k),
+plt.plot(F_values, TLZ_theoretical(eps_0, F_values, D_z, (4 * D_y / eps_0**2)),
          linestyle=":", label="theoretical")
 plt.ylim(-0.1, 1.1)
 plt.legend()

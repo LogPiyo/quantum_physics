@@ -15,7 +15,7 @@ from scipy.integrate import solve_ivp
 # parameter
 eps_0 = 1  # energy slope
 D_z = 0.1  # minimal energy gap
-k = 1  # geodesic curvature
+D_y = 0.25  # twist strength
 F = -1  # parameter sweep (should not change)
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time
@@ -44,10 +44,10 @@ def H(t, component, real=True):
     H = {}
 
     H['x'] = eps_0 * q(t, F)
-    H['y'] = 0.5 * k * eps_0**2 * q(t, F)**2
+    H['y'] = 0.5 * (4 * D_y / eps_0**2) * eps_0**2 * q(t, F)**2
     H['z'] = D_z
     H['x_dot'] = eps_0
-    H['y_dot'] = k * eps_0**2 * q(t, F)
+    H['y_dot'] = (4 * D_y / eps_0**2) * eps_0**2 * q(t, F)
     H['z_dot'] = 0
 
     return H[component]
@@ -76,7 +76,7 @@ for i in range(n):
     OP = abs(dot)**2  # occupation probability
     OP_list.append(OP)
 
-TLZ = -math.pi * (D_z + k*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
+TLZ = -math.pi * (D_z + (4 * D_y / eps_0**2)*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
 P_TLZ = math.exp(TLZ) + t_eval*0  # theoretical
 arr = np.array(OP_list)
 plt.plot(t_eval, arr, label="numerical")

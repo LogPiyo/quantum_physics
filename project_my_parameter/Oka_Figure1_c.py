@@ -14,7 +14,7 @@ from scipy.integrate import solve_ivp
 # parameter
 eps_0 = 1  # energy slope
 D_z = 0.1  # minimal energy gap
-k = 1  # geodesic curvature
+D_y = 0.25  # twist strength
 
 h = 1  # Dirac constant
 
@@ -42,10 +42,10 @@ def H(t, component, real=True):
     H = {}
 
     H['x'] = eps_0 * q(t, F)
-    H['y'] = 0.5 * k * eps_0**2 * q(t, F)**2
+    H['y'] = 0.5 * (4 * D_y / eps_0**2) * eps_0**2 * q(t, F)**2
     H['z'] = D_z
     H['x_dot'] = eps_0
-    H['y_dot'] = k * eps_0**2 * q(t, F)
+    H['y_dot'] = (4 * D_y / eps_0**2) * eps_0**2 * q(t, F)
     H['z_dot'] = 0
 
     return H[component]
@@ -75,7 +75,7 @@ for F in F_values:
     TP_list.append(TP)
 
 plt.plot(F_values, TP_list, label="numerical")
-plt.plot(F_values, TLZ_theoretical(eps_0, F_values, D_z, k),
+plt.plot(F_values, TLZ_theoretical(eps_0, F_values, D_z, (4 * D_y / eps_0**2)),
          linestyle=":", label="theoretical")
 plt.legend()
 plt.show()
