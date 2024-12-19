@@ -26,8 +26,8 @@ h = 1  # Dirac constant
 TP_list = []  # transition probability
 
 
-def TLZ_theoretical(v):
-    TLZ = -math.pi * (D_z + k*v*F/4)**2 / (abs(v) * abs(F))
+def TLZ_theoretical(eps_0):
+    TLZ = -math.pi * (D_z + k*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
     return np.exp(TLZ)
 
 
