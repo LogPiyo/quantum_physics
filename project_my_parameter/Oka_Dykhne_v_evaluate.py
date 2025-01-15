@@ -14,9 +14,9 @@ import matplotlib.pyplot as plt
 from scipy.integrate import quad
 
 # parameter
-eps_0_values = np.linspace(-2, 2, 100)  # energy slope
+eps_0 = 1  # energy slope
 D_z = 0.1  # minimal energy gap
-k = 1  # geodesic curvature
+D_y_values = np.linspace(-2, 2, 100)  # twist strength
 
 F = 1  # sweep speed
 tt = 0  # transition time
@@ -26,8 +26,8 @@ h = 1  # Dirac constant
 TP_list = []  # transition probability
 
 
-def TLZ_theoretical(eps_0):
-    TLZ = -math.pi * (D_z + k*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
+def TLZ_theoretical(D_y):
+    TLZ = -math.pi * (D_z + (4 * D_y / eps_0**2)*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
     return np.exp(TLZ)
 
 
@@ -60,10 +60,10 @@ def Hc(t, component):
     H = {}
 
     H['x'] = eps_0 * q(t)
-    H['y'] = 0.5 * k * eps_0**2 * q(t)**2
+    H['y'] = 0.5 * (4 * D_y / eps_0**2) * eps_0**2 * q(t)**2
     H['z'] = D_z
     H['x_dot'] = eps_0
-    H['y_dot'] = k * eps_0**2 * q(t)
+    H['y_dot'] = (4 * D_y / eps_0**2) * eps_0**2 * q(t)
     H['z_dot'] = 0
 
     return H[component]
@@ -115,8 +115,8 @@ def Re_E(t):
     return Integrand.real
 
 
-for eps_0 in eps_0_values:
-    zero_approx = abs(D_z + k*eps_0*F/4) / (abs(eps_0) * (-F))
+for D_y in D_y_values:
+    zero_approx = abs(D_z + (4 * D_y / eps_0**2)*eps_0*F/4) / (abs(eps_0) * (-F))
     # zero of adiabatic energy (approximated)
 
     # imaginary part of integral of adiabatic energy (unitary transformed)
@@ -128,8 +128,8 @@ for eps_0 in eps_0_values:
     TP = math.exp(log_TP)
     TP_list.append(TP)
 
-plt.plot(eps_0_values, TP_list, label="numerical")
-plt.plot(eps_0_values, TLZ_theoretical(eps_0_values),
+plt.plot(D_y_values, TP_list, label="numerical")
+plt.plot(D_y_values, TLZ_theoretical(D_y_values),
          linestyle=":", label="theoretical")
 plt.ylim(-0.1, 1.1)
 plt.legend()

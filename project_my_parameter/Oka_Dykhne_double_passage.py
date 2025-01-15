@@ -24,9 +24,9 @@ from my_module.function import q, adia_eng, func_psi_module, eig_vec
 from scipy.integrate import solve_ivp, quad
 
 # parameter
-eps_0 = -60  # energy slope
+eps_0 = -50  # energy slope
 D_z = 4  # minimal energy gap
-D_y = 90  # twist strength
+D_y = -22.93877551020408  # twist strength
 F = -1  # sweep speed Fの値は基本的に変更しない(初期値 -1)(時間反転させないため)
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time

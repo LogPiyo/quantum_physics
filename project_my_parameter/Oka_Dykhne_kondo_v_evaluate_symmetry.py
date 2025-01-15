@@ -17,9 +17,9 @@ from my_module.function import q, adia_eng
 from scipy.integrate import quad
 
 # parameter
-eps_0_values = np.linspace(-200, 200, 50)  # energy slope
+eps_0 = -60
 D_z = 4  # minimal energy gap
-k = 0.1  # geodesic curvature
+D_y_values = np.linspace(-90, 90, 50)  # twist strength
 
 # constant
 h = 1  # Dirac constant (should not change)
@@ -27,8 +27,8 @@ F = -1  # sweep speed (should not change)(時間反転させないため)
 TP_list = []  # transition probability
 
 
-def TLZ_theoretical(eps_0):
-    TLZ = -math.pi * (D_z - k * eps_0 * F / 4)**2 / (abs(eps_0) * abs(F))
+def TLZ_theoretical(D_y):
+    TLZ = -math.pi * (D_z - (4 * D_y / eps_0**2) * eps_0 * F / 4)**2 / (abs(eps_0) * abs(F))
     return np.exp(TLZ)
 
 
@@ -48,13 +48,13 @@ def Hc(t, component, real=False):
 
     H['x'] = -eps_0 * cmath.cos(q(t, F))
     # H['y'] = (0.25 * k * v**2 * cmath.cos(q(t, F)) * cmath.sin(2 * q(t, F)))
-    H['y'] = -0.125 * k * eps_0**2 * cmath.sin(2 * q(t, F))*cmath.sin(2 * q(t, F))
+    H['y'] = -0.125 * (4 * D_y / eps_0**2) * eps_0**2 * cmath.sin(2 * q(t, F))*cmath.sin(2 * q(t, F))
     H['z'] = D_z * cmath.sin(q(t, F))
     H['x_dot'] = eps_0 * cmath.sin(q(t, F))
     # H['y_dot'] = (0.25 * k * v**2
     #               * (-cmath.sin(q(t, F)) * cmath.sin(2 * q(t, F))
     #                  + 2*cmath.cos(q(t, F)) * cmath.cos(2 * q(t, F))))
-    H['y_dot'] = -0.125 * k * eps_0**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
+    H['y_dot'] = -0.125 * (4 * D_y / eps_0**2) * eps_0**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
     H['z_dot'] = D_z * cmath.cos(q(t, F))
 
     if real:
@@ -77,12 +77,12 @@ def Re_E(t):
     return Integrand.real
 
 
-for eps_0 in eps_0_values:
+for D_y in D_y_values:
     # if abs(v) < 0.07:  # avoid Integration Warning
     #     continue
 
     tp = -math.pi / (2 * abs(F))  # transition time
-    zero_approx = abs(D_z - k * abs(eps_0) * F / 4) / (abs(eps_0) * (-F))
+    zero_approx = abs(D_z - (4 * D_y / eps_0**2) * abs(eps_0) * F / 4) / (abs(eps_0) * (-F))
     # -pi/2のときは分子の第二項の符号が変わる
     # 被積分関数の符号と合わせる
     # zero of adiabatic energy (approximated)
@@ -98,8 +98,8 @@ for eps_0 in eps_0_values:
 
 # %%
 # v_values = v_values[abs(v_values) >= 0.07]  # avoid Integration Warning
-plt.plot(eps_0_values, TP_list, label="numerical", color="tab:blue", linestyle="None", marker="x")
-plt.plot(eps_0_values, TLZ_theoretical(eps_0_values), label="theoretical", color="tab:red")
+plt.plot(D_y_values, TP_list, label="numerical", color="tab:blue", linestyle="None", marker="x")
+plt.plot(D_y_values, TLZ_theoretical(D_y_values), label="theoretical", color="tab:red")
 plt.xlabel(r"energy slope $\epsilon_0$")
 plt.ylabel(r"transition probability $P$")
 plt.title(rf"$\Delta_Z = {D_z}, \omega = {-F}$")
