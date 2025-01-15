@@ -71,8 +71,8 @@ twisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微
      \end{pmatrix} \\
      &=
      \begin{pmatrix}
-          \Delta_z & \varepsilon_0 \omega t - i \frac{1}{2} \Delta_y (\omega t)^2\\
-          \varepsilon_0 \omega t + i \frac{1}{2} \Delta_y (\omega t)^2 & -\Delta_z
+          \Delta_z & \varepsilon_0 \omega t - i 2 \Delta_y (\omega t)^2\\
+          \varepsilon_0 \omega t + i 2 \Delta_y (\omega t)^2 & -\Delta_z
      \end{pmatrix} 
 \end{align*}
 ```
