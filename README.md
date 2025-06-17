@@ -1,7 +1,6 @@
 # このレポジトリについて
 量子力学の2状態系における占有確率を出力するプログラムが含まれます。
 以下に本レポジトリの概略を示します。
-さらに詳しい説明は[こちら](/DOC/)を参照してください。
 
 # 各プログラムの説明
 ## Oka_Dykhne.py
@@ -83,7 +82,7 @@ twisted Landau-Zenerモデルについて、Shr&ouml;dinger方程式の数値微
     \sqrt{(\nu F t)^2 + (\frac{1}{2} \kappa_{||} \nu^2 (F t)^2)^2} & -m
 \end{pmatrix}
 ```
-をtwisted Landau-Zenerモデルと呼びます。詳しくは[こちら](DOC/TLZ.md)を参照してください。
+をtwisted Landau-Zenerモデルと呼びます。
 
 ## multiple-passage twisted Landau-Zenerモデル
 ```math
@@ -94,7 +93,7 @@ H_\mathrm{MTLZ}(t)
 -\varepsilon_0 \cos \omega t - i \frac{1}{2} \Delta_y \sin^2 (2 \omega t) & -\Delta_z \sin \omega t
 \end{pmatrix}
 ```
-をmultiple-passage twisted Landau-Zenerモデルと呼びます。詳しくは[こちら](DOC/mpTLZ.md)を参照してください。
+をmultiple-passage twisted Landau-Zenerモデルと呼びます。
 
 ### 図1 断熱エネルギーの時間発展
 <img src="resources/MTLZ_Hamiltonian.jpg" alt="MTLZ Hamitonianの概要" width=400>
@@ -112,10 +111,6 @@ H_\mathrm{MTLZ}(t)
 \text{sweep speed} &: F \leftrightarrow -\omega
 \end{align*}
 ```
-
-
-# 参考文献
-[こちら](DOC/thesis_list.md)を参照してください。
 
 # .pyファイルを.ipynbのように扱う
 本レポジトリ内の`.py`ファイルは，
