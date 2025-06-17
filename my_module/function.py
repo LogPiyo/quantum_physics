@@ -1,7 +1,10 @@
+from typing import Callable
+import numpy.typing as npt
+
 import numpy as np
 
 
-def q(t, F):
+def q(t: float, F: float) -> float:
     """
     define parameter sweep
 
@@ -17,7 +20,7 @@ def q(t, F):
     return -F * t
 
 
-def phi_dot(t, Ham, eps=0):
+def phi_dot(t: complex, Ham: Callable[..., complex], eps: float = 0) -> complex:
     """
     define derivative of azimuthal angle
 
@@ -28,17 +31,17 @@ def phi_dot(t, Ham, eps=0):
     Returns:
         float: derivative of azimuthal angle
     """
-    H_x = Ham(t, "x")
-    H_y = Ham(t, "y")
-    H_x_dot = Ham(t, "x_dot")
-    H_y_dot = Ham(t, "y_dot")
+    H_x: complex = Ham(t, "x")
+    H_y: complex = Ham(t, "y")
+    H_x_dot: complex = Ham(t, "x_dot")
+    H_y_dot: complex = Ham(t, "y_dot")
 
-    num = -H_x * H_y_dot + H_x_dot * H_y
-    den = H_x**2 + H_y**2
-    return num / (den + eps)
+    num: complex = -H_x * H_y_dot + H_x_dot * H_y
+    den: complex = H_x**2 + H_y**2
+    return num / (den + eps + 1e-10)  # Avoid division by zero with a small epsilon
 
 
-def adia_eng(t, Ham, ut=False, real=False, F=None):
+def adia_eng(t: float, Ham: Callable, ut: bool = False, real: bool = False, F: float | None = None) -> complex:
     """define adiabatic energy
 
     Args:
@@ -51,10 +54,10 @@ def adia_eng(t, Ham, ut=False, real=False, F=None):
     Returns:
         complex: adiabatic energy
     """
-    H_x = Ham(t, "x")
-    H_y = Ham(t, "y")
-    H_z = Ham(t, "z")
-    phi_d = phi_dot(t, Ham)
+    H_x: complex = Ham(t, "x")
+    H_y: complex = Ham(t, "y")
+    H_z: complex = Ham(t, "z")
+    phi_d: complex = phi_dot(t, Ham)
 
     if ut:
         if F is None:
@@ -67,42 +70,42 @@ def adia_eng(t, Ham, ut=False, real=False, F=None):
         return np.sqrt(H_x**2 + H_y**2 + H_z**2)
 
 
-def eig_vec(t, Ham, s):
+def eig_vec(t: float, Ham: Callable[..., float], s: str) -> npt.NDArray:
     """
     eigenvector
 
     Args:
         t (float): time
-        Ham (function): Hamiltonian
-        s (state): upper or lower
+        Ham (callable): Hamiltonian
+        s (str): upper or lower
 
     Returns:
         array: eigenvector
     """
-    H_x = Ham(t, "x", real=True)
-    H_y = Ham(t, "y", real=True)
-    H_z = Ham(t, "z", real=True)
-    adia_energy = adia_eng(t, Ham, real=True)
+    H_x: float = Ham(t, "x", real=True)
+    H_y: float = Ham(t, "y", real=True)
+    H_z: float = Ham(t, "z", real=True)
+    adia_energy: float = adia_eng(t, Ham, real=True)
 
     # lower stateを求めるときは断熱エネルギーを符号反転する
     if s == "lower":
         adia_energy = -adia_energy
 
-    eig_vec = np.array([H_x - H_y * 1j, adia_energy - H_z])
+    eig_vec: npt.NDArray = np.array([H_x - H_y * 1j, adia_energy - H_z])
     eig_vec /= np.linalg.norm(eig_vec)  # normalization
     return eig_vec
 
 
-def adia_param(v, F, m, k):
+def adia_param(v: float, F: float, m: float, k: float) -> float:
     return (m - k * v * F / 4)**2 / (2 * abs(v) * abs(F))
 
 
-def TLZ_theoretical(v, F, m, k):
+def TLZ_theoretical(v: float, F: float, m: float, k: float) -> float:
     TLZ = -np.pi * (m + k * v * F / 4)**2 / (abs(v) * abs(F))
     return np.exp(TLZ)
 
 
-def func_psi_module(t, Ham, var, h=1):
+def func_psi_module(t: float, Ham: Callable[..., float], var: list[float], h: float = 1):
     """
     state vector
 
@@ -119,14 +122,14 @@ def func_psi_module(t, Ham, var, h=1):
         list: 微分方程式
     """
 
-    H_x = Ham(t, "x", real=True)
-    H_y = Ham(t, "y", real=True)
-    H_z = Ham(t, "z", real=True)
+    H_x: float = Ham(t, "x", real=True)
+    H_y: float = Ham(t, "y", real=True)
+    H_z: float = Ham(t, "z", real=True)
 
-    dadt = (+1 / h) * (H_x * var[3] - H_y * var[2] + H_z * var[1])
-    dbdt = (-1 / h) * (H_x * var[2] + H_y * var[3] + H_z * var[0])
-    dcdt = (+1 / h) * (H_x * var[1] + H_y * var[0] - H_z * var[3])
-    dddt = (-1 / h) * (H_x * var[0] - H_y * var[1] - H_z * var[2])
+    dadt: float = (+1 / h) * (H_x * var[3] - H_y * var[2] + H_z * var[1])
+    dbdt: float = (-1 / h) * (H_x * var[2] + H_y * var[3] + H_z * var[0])
+    dcdt: float = (+1 / h) * (H_x * var[1] + H_y * var[0] - H_z * var[3])
+    dddt: float = (-1 / h) * (H_x * var[0] - H_y * var[1] - H_z * var[2])
 
     return [dadt, dbdt, dcdt, dddt]
 
