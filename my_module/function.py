@@ -98,8 +98,8 @@ def adia_param(v: float, F: float, m: float, k: float) -> float:
     return (m - k * v * F / 4)**2 / (2 * abs(v) * abs(F))
 
 
-def TLZ_theoretical(v: float, F: float, m: float, k: float) -> float:
-    TLZ = -np.pi * (m + k * v * F / 4)**2 / (abs(v) * abs(F))
+def TLZ_theoretical(v: float | npt.NDArray, F: float | npt.NDArray, m: float | npt.NDArray, k: float | npt.NDArray) -> npt.NDArray:
+    TLZ = -np.pi * (m + k * v * F / 4)**2 / (np.abs(v) * np.abs(F))
     return np.exp(TLZ)
 
 
