@@ -82,10 +82,10 @@ def eig_vec(t: float, Ham: Callable[..., float], s: str) -> np.ndarray:
     Returns:
         array: eigenvector
     """
-    H_x: float = Ham(t, "x", real=True)
-    H_y: float = Ham(t, "y", real=True)
-    H_z: float = Ham(t, "z", real=True)
-    adia_energy: float = adia_eng(t, Ham, real=True)
+    H_x: float = Ham(t, "x").real
+    H_y: float = Ham(t, "y").real
+    H_z: float = Ham(t, "z").real
+    adia_energy: float = adia_eng(t, Ham).real
 
     # lower stateを求めるときは断熱エネルギーを符号反転する
     if s == "lower":
@@ -122,9 +122,9 @@ def func_psi_module(t: float, Ham: Callable[..., float], var: list[float], h: fl
         list: 微分方程式
     """
 
-    H_x: float = Ham(t, "x", real=True)
-    H_y: float = Ham(t, "y", real=True)
-    H_z: float = Ham(t, "z", real=True)
+    H_x: float = Ham(t, "x").real
+    H_y: float = Ham(t, "y").real
+    H_z: float = Ham(t, "z").real
 
     dadt: float = (+1 / h) * (H_x * var[3] - H_y * var[2] + H_z * var[1])
     dbdt: float = (-1 / h) * (H_x * var[2] + H_y * var[3] + H_z * var[0])

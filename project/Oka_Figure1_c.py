@@ -28,7 +28,7 @@ t_eval = np.linspace(-t_f, t_f, n)  # time
 F_values = np.linspace(-2, 2, n)  # sweep speed
 
 
-def H(t, component, real=True):
+def H(t, component):
     """
     define real Hamiltonian
 

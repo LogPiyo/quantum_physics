@@ -41,7 +41,7 @@ def phi_dot(t: complex, Ham: Callable[..., complex], eps: float = 0) -> complex:
     return num / (den + eps + 1e-10)  # Avoid division by zero with a small epsilon
 
 
-def adia_eng(t: float, Ham: Callable, ut: bool = False, real: bool = False, F: float | None = None) -> complex:
+def adia_eng(t: float, Ham: Callable[..., complex], ut: bool = False, F: float | None = None) -> complex:
     """define adiabatic energy
 
     Args:
@@ -64,8 +64,6 @@ def adia_eng(t: float, Ham: Callable, ut: bool = False, real: bool = False, F: f
             raise ValueError("if `ut` is `True`, the argument 'F' must be specified.")
         else:
             return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-F) * phi_d)**2)
-    elif real:
-        return np.sqrt(H_x**2 + H_y**2 + H_z**2).real
     else:
         return np.sqrt(H_x**2 + H_y**2 + H_z**2)
 
@@ -82,10 +80,10 @@ def eig_vec(t: float, Ham: Callable[..., float], s: str) -> npt.NDArray:
     Returns:
         array: eigenvector
     """
-    H_x: float = Ham(t, "x", real=True)
-    H_y: float = Ham(t, "y", real=True)
-    H_z: float = Ham(t, "z", real=True)
-    adia_energy: float = adia_eng(t, Ham, real=True)
+    H_x: float = Ham(t, "x").real
+    H_y: float = Ham(t, "y").real
+    H_z: float = Ham(t, "z").real
+    adia_energy: float = adia_eng(t, Ham).real
 
     # lower stateを求めるときは断熱エネルギーを符号反転する
     if s == "lower":
@@ -122,9 +120,9 @@ def func_psi_module(t: float, Ham: Callable[..., float], var: list[float], h: fl
         list: 微分方程式
     """
 
-    H_x: float = Ham(t, "x", real=True)
-    H_y: float = Ham(t, "y", real=True)
-    H_z: float = Ham(t, "z", real=True)
+    H_x: float = Ham(t, "x").real
+    H_y: float = Ham(t, "y").real
+    H_z: float = Ham(t, "z").real
 
     dadt: float = (+1 / h) * (H_x * var[3] - H_y * var[2] + H_z * var[1])
     dbdt: float = (-1 / h) * (H_x * var[2] + H_y * var[3] + H_z * var[0])
