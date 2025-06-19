@@ -47,7 +47,7 @@ phi_s = (math.pi/4
 print("Stokes phase: ", phi_s)
 TLZ = -math.pi * (D_z - (4 * D_y / eps_0**2)*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
 # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
-zero_approx = abs(D_z - (4 * D_y / eps_0**2)*abs(eps_0)*F/4) / (abs(eps_0) * (-F))
+zero_approx = abs(D_z - (4 * D_y / eps_0**2) * eps_0 * F / 4) / (abs(eps_0) * (-F))
 # -pi/2のときは分子の第二項の符号が変わる
 # 被積分関数の符号と合わせる
 
