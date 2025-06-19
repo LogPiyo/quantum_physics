@@ -1,6 +1,9 @@
+# type hint libraries
 from typing import Callable
 import numpy.typing as npt
 
+# math libraries
+import cmath
 import numpy as np
 
 
@@ -42,30 +45,41 @@ def phi_dot(time: complex, hamiltonian: Callable[..., complex], epsilon: float =
     return num / (den + epsilon)
 
 
-def adia_eng(time: complex, Hamiltonian: Callable[..., complex], ut: bool = False, omega: float | None = None) -> complex | float:
-    """define adiabatic energy
+def to_LZ(hamiltonian: Callable[..., complex], sweep_speed: float) -> Callable[..., complex]:
+    """
+    convert to LZ Hamiltonian
+
+    Args:
+        time (float): time
+        hamiltonian (Callable): Hamiltonian
+
+    Returns:
+        float: LZ parameter
+    """
+    def LZ_hamiltonian(time: complex, component: str) -> complex:
+        H_LZ: dict[str, complex] = {
+            "x": cmath.sqrt(hamiltonian(time, "x")**2 + hamiltonian(time, "y")**2),
+            "y": 0,
+            "z": hamiltonian(time, "z") - 0.5 * sweep_speed * phi_dot(time, hamiltonian)
+        }
+
+        return H_LZ[component]
+
+    return LZ_hamiltonian
+
+
+def adia_eng(time: complex, hamiltonian: Callable[..., complex]) -> complex:
+    """
+    define adiabatic energy
 
     Args:
         time (complex): time
         hamiltonian (callable): Hamiltonian
-        ut (bool, optional): unitary transformed. Defaults to False.
-        F (float, optional): sweep speed. If `ut=True`, this parameter must be specified. Defaults to None.
 
     Returns:
         complex: adiabatic energy
     """
-    H_x: complex = Hamiltonian(time, "x")
-    H_y: complex = Hamiltonian(time, "y")
-    H_z: complex = Hamiltonian(time, "z")
-    phi_d: complex = phi_dot(time, Hamiltonian)
-
-    if ut:
-        if omega is None:
-            raise ValueError("if `ut` is `True`, the argument 'F' must be specified.")
-        else:
-            return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-omega) * phi_d)**2)
-    else:
-        return np.sqrt(H_x**2 + H_y**2 + H_z**2)
+    return cmath.sqrt(hamiltonian(time, "x")**2 + hamiltonian(time, "y")**2 + hamiltonian(time, "z")**2)
 
 
 def eig_vec(time: float, hamiltonian: Callable[..., float], state: str) -> np.ndarray:

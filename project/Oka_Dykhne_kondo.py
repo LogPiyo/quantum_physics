@@ -17,7 +17,7 @@ import cmath
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import TLZ_theoretical, q, adia_eng
+from my_module.function import TLZ_theoretical, q, adia_eng, to_LZ
 from scipy.integrate import quad
 
 # parameter
@@ -68,7 +68,7 @@ def Re_E(t):
     Returns:
         float: real part of adiabatic energy (unitary transformed)
     """
-    Integrand = adia_eng(tp + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp + 1j*t, to_LZ(Hc, F))
     return Integrand.real
 
 
