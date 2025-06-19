@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from my_module.function import q
-from my_module_my_param.calculator import calculate_occupation_probability
+from my_module.calculator import calculate_occupation_probability
 
 import numpy.typing as npt
 from typing import Final
