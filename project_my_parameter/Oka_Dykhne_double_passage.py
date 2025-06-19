@@ -20,14 +20,14 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, adia_eng, func_psi_module, eig_vec
+from my_module.function import q, adia_eng, func_psi_module, eig_vec, to_LZ
 from scipy.integrate import solve_ivp, quad
 
 # parameter
 eps_0 = -50  # energy slope
 D_z = 4  # minimal energy gap
-D_y = -22.93877551020408  # twist strength
-F = -1  # sweep speed Fの値は基本的に変更しない(初期値 -1)(時間反転させないため)
+D_y = 20  # twist strength
+F = -1  # sweep speed Fの値は変更しない(初期値 -1)(時間反転させないため)
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time
 
@@ -45,7 +45,7 @@ phi_s = (math.pi/4
          + delta * (math.log(delta) - 1)
          + cmath.phase(scipy.special.gamma(1 - 1j*delta)))  # Stokes phase(弧度法)
 print("Stokes phase: ", phi_s)
-TLZ = -math.pi * (D_z - (4 * D_y / eps_0**2)*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
+TLZ = -math.pi * (D_z - (4 * D_y / eps_0**2) * eps_0 * F / 4)**2 / (abs(eps_0) * abs(F))
 # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
 zero_approx = abs(D_z - (4 * D_y / eps_0**2) * eps_0 * F / 4) / (abs(eps_0) * (-F))
 # -pi/2のときは分子の第二項の符号が変わる
@@ -65,11 +65,11 @@ def Hc(t, component, real=False):
     """
     H = {}
 
-    H['x'] = -eps_0 * cmath.cos(q(t, F))
-    H['y'] = -0.125 * (4 * D_y / eps_0**2) * eps_0**2 * cmath.sin(2*q(t, F))**2
+    H['x'] = eps_0 * cmath.cos(q(t, F))
+    H['y'] = 0.125 * (4 * D_y / eps_0**2) * eps_0**2 * cmath.sin(2*q(t, F))**2
     H['z'] = D_z * cmath.sin(q(t, F))
-    H['x_dot'] = eps_0 * cmath.sin(q(t, F))
-    H['y_dot'] = -0.125 * (4 * D_y / eps_0**2) * eps_0**2 * 4 * cmath.sin(2*q(t, F)) * cmath.cos(2*q(t, F))
+    H['x_dot'] = -eps_0 * cmath.sin(q(t, F))
+    H['y_dot'] = 0.125 * (4 * D_y / eps_0**2) * eps_0**2 * 4 * cmath.sin(2*q(t, F)) * cmath.cos(2*q(t, F))
     H['z_dot'] = D_z * cmath.cos(q(t, F))
 
     if real:
@@ -88,7 +88,7 @@ def Re_E(t):
     Returns:
         float: adiabatic energy
     """
-    Integrand = adia_eng(tp_1 + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(Hc, F))
     return Integrand.real
 
 
@@ -100,7 +100,7 @@ TP *= -4 * (-F) / abs(F)
 
 
 def Im_E_1(t):
-    Integrand = adia_eng(tp_1 + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(Hc, F))
     return Integrand.imag
 
 
@@ -112,7 +112,7 @@ phase_term1 *= (-F) / abs(F)
 
 
 def Im_E_2(t):
-    Integrand = adia_eng(tp_2 + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_2 + 1j*t, to_LZ(Hc, F))
     return Integrand.imag
 
 
@@ -124,7 +124,7 @@ phase_term2 *= (-F) / abs(F)
 
 
 def E_3(t):
-    Integrand = adia_eng(t, Hc, ut=True, F=F)
+    Integrand = adia_eng(t, to_LZ(Hc, F))
     return Integrand.real
 
 
@@ -194,8 +194,9 @@ P_TP += t_eval*0
 P_TLZ += t_eval*0
 plt.plot(t_eval, OP_list, label="numerical", color="tab:blue")
 # plt.plot(t_eval, P_f_adia, label="adiabatic(24)")
-plt.plot(t_eval, P_f_HS, label="heuristic", color="tab:green")
-plt.plot(t_eval, P_TP, label="first transition", color="tab:red")
+plt.plot(t_eval, P_f_HS, label="theoretical (2nd transition)", color="tab:green")
+plt.plot(t_eval, P_TP, label="theoretical (1st transition)", color="tab:red")
+plt.plot(t_eval, P_TLZ, label="first transition (Oka's function)", linestyle=":", color="tab:orange")
 plt.xlim([-3, 3])
 plt.ylim([-0.1, 1.1])
 plt.xlabel(r"time $t$")

@@ -47,7 +47,7 @@ phi_s = (math.pi/4
 print("Stokes phase: ", phi_s)
 TLZ = -math.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
 # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
-zero_approx = abs(m - k*abs(v)*F/4) / (abs(v) * (-F))
+zero_approx = abs(m - k*(v)*F/4) / (abs(v) * (-F))
 # -pi/2のときは分子の第二項の符号が変わる
 # 被積分関数の符号と合わせる
 
@@ -195,7 +195,7 @@ P_TLZ += t_eval*0
 plt.plot(t_eval, OP_list, label="numerical", color="tab:blue")
 # plt.plot(t_eval, P_f_adia, label="adiabatic(24)")
 plt.plot(t_eval, P_f_HS, label="heuristic", color="tab:green")
-plt.plot(t_eval, P_TP, label="first transition", color="tab:red")
+plt.plot(t_eval, P_TLZ, label="first transition", color="tab:red")
 plt.xlim([-3, 3])
 plt.ylim([-0.1, 1.1])
 plt.xlabel(r"time $t$")
@@ -203,3 +203,5 @@ plt.ylabel(r"occupation probability $P$")
 plt.title(rf"$\varepsilon_0 = {v}, \Delta_z = {m}, \Delta_y = {v**2 * k / 4:.0f}, \omega = {-F}$")
 plt.legend()
 plt.show()
+
+# %%

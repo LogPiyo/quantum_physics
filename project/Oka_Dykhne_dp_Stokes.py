@@ -125,7 +125,7 @@ for initial_v in [-5, 5]:
             phi_s = prev_ans_phi_s + d_phi_s  # Stokes phase(弧度法)
             TLZ = -math.pi * (m - k*v*F/4)**2 / (abs(v) * abs(F))
             # １回目の遷移がOkaモデルと全体の符号が反転している場合は分子の第２項の符号をマイナスにする
-            zero_approx = abs(m - k*abs(v)*F/4) / (abs(v) * (-F))
+            zero_approx = abs(m - k*(v)*F/4) / (abs(v) * (-F))
 
             # integral of Re_E
             ll_Re_E = 0  # lower limit

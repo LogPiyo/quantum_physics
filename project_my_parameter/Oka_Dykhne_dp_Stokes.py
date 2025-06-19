@@ -17,7 +17,7 @@ from scipy.integrate import solve_ivp, quad
 
 # parameter
 eps_0 = -50
-D_y_val = np.linspace(-50, 1, 50)  # twist strength
+D_y_val = np.linspace(-100, 100, 50)  # twist strength
 # D_y_val = D_y_val[(D_y_val >= 5) | (D_y_val <= -5)]
 D_z = 4  # minimal energy gap
 F = -1  # sweep speed (should not change)(default value: -1)(時間反転させないため)
@@ -203,11 +203,11 @@ for D_y in D_y_val:
 
 # %%
 plt.plot(D_y_val, Stokes_val, linestyle="None", marker="x", label=r"numerical")
-plt.plot(D_y_val, Stokes_val_thr_TLZ, label=r"TLZ", color="tab:green")
-plt.plot(D_y_val, Stokes_val_thr_LZ, label=r"LZ", color="tab:orange")
+plt.plot(D_y_val, Stokes_val_thr_TLZ, label=r"theoretical (TLZ)", color="tab:green")
+plt.plot(D_y_val, Stokes_val_thr_LZ, label=r"theoretical (LZ)", color="tab:orange")
 plt.xlabel(r"$\Delta_y$")
 plt.ylabel(r"Stokes phase $\varphi_s$")
-plt.title(rf"$\Delta_z = {D_z}, \omega = {-F}$")
+plt.title(rf"$\epsilon_0 = {eps_0}, \Delta_z = {D_z}, \omega = {-F}$")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
