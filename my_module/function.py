@@ -4,89 +4,89 @@ import numpy.typing as npt
 import numpy as np
 
 
-def q(t: float, F: float) -> float:
+def q(time: float, sweep_speed: float) -> float:
     """
     define parameter sweep
 
     q = adiabatic parameter * time
 
     Args:
-        t (float): time
-        F (float): sweep speed (adiabatic parameter)
+        time (float): time
+        sweep_speed (float): sweep speed (adiabatic parameter)
 
     Returns:
         float: parameter sweep
     """
-    return -F * t
+    return sweep_speed * time
 
 
-def phi_dot(t: complex, Ham: Callable[..., complex], eps: float = 0) -> complex:
+def phi_dot(time: complex, hamiltonian: Callable[..., complex], epsilon: float = 0) -> complex:
     """
     define derivative of azimuthal angle
 
     Args:
-        t (complex): time
-        eps (float): epsilon
+        time (complex): time
+        hamiltonian (Callable): Hamiltonian function
+        epsilon (float, optional): division by zero regularization parameter. Defaults to 0.
 
     Returns:
-        float: derivative of azimuthal angle
+        complex: derivative of azimuthal angle
     """
-    H_x: complex = Ham(t, "x")
-    H_y: complex = Ham(t, "y")
-    H_x_dot: complex = Ham(t, "x_dot")
-    H_y_dot: complex = Ham(t, "y_dot")
+    H_x: complex = hamiltonian(time, "x")
+    H_y: complex = hamiltonian(time, "y")
+    H_x_dot: complex = hamiltonian(time, "x_dot")
+    H_y_dot: complex = hamiltonian(time, "y_dot")
 
     num: complex = -H_x * H_y_dot + H_x_dot * H_y
     den: complex = H_x**2 + H_y**2
-    return num / (den + eps + 1e-10)  # Avoid division by zero with a small epsilon
+    return num / (den + epsilon)
 
 
-def adia_eng(t: float, Ham: Callable[..., complex], ut: bool = False, F: float | None = None) -> complex:
+def adia_eng(time: complex, Hamiltonian: Callable[..., complex], ut: bool = False, omega: float | None = None) -> complex | float:
     """define adiabatic energy
 
     Args:
-        t (complex): time
-        Ham (function): Hamiltonian
+        time (complex): time
+        hamiltonian (callable): Hamiltonian
         ut (bool, optional): unitary transformed. Defaults to False.
-        real (bool, optional): real part. Defaults to False.
         F (float, optional): sweep speed. If `ut=True`, this parameter must be specified. Defaults to None.
 
     Returns:
         complex: adiabatic energy
     """
-    H_x: complex = Ham(t, "x")
-    H_y: complex = Ham(t, "y")
-    H_z: complex = Ham(t, "z")
-    phi_d: complex = phi_dot(t, Ham)
+    H_x: complex = Hamiltonian(time, "x")
+    H_y: complex = Hamiltonian(time, "y")
+    H_z: complex = Hamiltonian(time, "z")
+    phi_d: complex = phi_dot(time, Hamiltonian)
 
     if ut:
-        if F is None:
+        if omega is None:
             raise ValueError("if `ut` is `True`, the argument 'F' must be specified.")
         else:
-            return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-F) * phi_d)**2)
+            return np.sqrt(H_x**2 + H_y**2 + (H_z + 0.5 * (-omega) * phi_d)**2)
     else:
         return np.sqrt(H_x**2 + H_y**2 + H_z**2)
 
 
-def eig_vec(t: float, Ham: Callable[..., float], s: str) -> npt.NDArray:
+def eig_vec(time: float, hamiltonian: Callable[..., float], state: str) -> np.ndarray:
     """
     eigenvector
 
     Args:
-        t (float): time
-        Ham (callable): Hamiltonian
-        s (str): upper or lower
+        time (float): time
+        hamiltonian (Callable): Hamiltonian
+        state (str): upper or lower
 
     Returns:
         array: eigenvector
     """
-    H_x: float = Ham(t, "x").real
-    H_y: float = Ham(t, "y").real
-    H_z: float = Ham(t, "z").real
-    adia_energy: float = adia_eng(t, Ham).real
+    H_x: float = hamiltonian(time, "x").real
+    H_y: float = hamiltonian(time, "y").real
+    H_z: float = hamiltonian(time, "z").real
+    adia_energy: float = adia_eng(time, hamiltonian).real
 
     # lower stateを求めるときは断熱エネルギーを符号反転する
-    if s == "lower":
+    if state == "lower":
         adia_energy = -adia_energy
 
     eig_vec: npt.NDArray = np.array([H_x - H_y * 1j, adia_energy - H_z])
@@ -94,16 +94,16 @@ def eig_vec(t: float, Ham: Callable[..., float], s: str) -> npt.NDArray:
     return eig_vec
 
 
-def adia_param(v: float, F: float, m: float, k: float) -> float:
-    return (m - k * v * F / 4)**2 / (2 * abs(v) * abs(F))
+def adia_param(v: float, omega: float, m: float, k: float) -> float:
+    return (m - k * v * omega / 4)**2 / (2 * abs(v) * abs(omega))
 
 
-def TLZ_theoretical(v: float | npt.NDArray, F: float | npt.NDArray, m: float | npt.NDArray, k: float | npt.NDArray) -> npt.NDArray:
-    TLZ = -np.pi * (m + k * v * F / 4)**2 / (np.abs(v) * np.abs(F))
+def TLZ_theoretical(v: float | npt.NDArray, omega: float | npt.NDArray, m: float | npt.NDArray, k: float | npt.NDArray) -> npt.NDArray:
+    TLZ = -np.pi * (m + k * v * omega / 4)**2 / (np.abs(v) * np.abs(omega))
     return np.exp(TLZ)
 
 
-def func_psi_module(t: float, Ham: Callable[..., float], var: list[float], h: float = 1):
+def func_psi_module(time: float, hamiltonian: Callable[..., float], var: list[float], h: float = 1) -> list[float]:
     """
     state vector
 
@@ -112,7 +112,8 @@ def func_psi_module(t: float, Ham: Callable[..., float], var: list[float], h: fl
     var[0]=a,var[1]=b, var[2]=c, var[3]=dとします。
 
     Args:
-        t (float): time
+        time (float): time
+        hamiltonian (Callable): Hamiltonian function
         var (list): 状態ベクトルの各成分を要素とするlist
         h (float, optional): Dirac constant. Default to 1.
 
@@ -120,9 +121,9 @@ def func_psi_module(t: float, Ham: Callable[..., float], var: list[float], h: fl
         list: 微分方程式
     """
 
-    H_x: float = Ham(t, "x").real
-    H_y: float = Ham(t, "y").real
-    H_z: float = Ham(t, "z").real
+    H_x: float = hamiltonian(time, "x").real
+    H_y: float = hamiltonian(time, "y").real
+    H_z: float = hamiltonian(time, "z").real
 
     dadt: float = (+1 / h) * (H_x * var[3] - H_y * var[2] + H_z * var[1])
     dbdt: float = (-1 / h) * (H_x * var[2] + H_y * var[3] + H_z * var[0])
