@@ -1,5 +1,5 @@
 # self-made libraries
-from my_module_my_param.function import eig_vec, func_psi_module
+from my_module.function import eig_vec, func_psi_module
 
 # type hint libraries
 import numpy.typing as npt

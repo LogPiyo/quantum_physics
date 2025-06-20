@@ -20,8 +20,9 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, adia_eng, func_psi_module, eig_vec
-from scipy.integrate import solve_ivp, quad
+from my_module.function import q, adia_eng, func_psi_module, to_LZ
+from my_module.calculator import calculate_occupation_probability
+from scipy.integrate import quad
 
 # parameter
 v = -60  # energy slope
@@ -36,9 +37,7 @@ tp_2 = math.pi / (2 * abs(F))  # second transition time
 
 # constant
 h = 1  # Dirac constant (should not change, initial value: 1)
-TP_list = []  # transition probability
 n = 500  # step
-OP_list = []  # ocupation probability
 t_eval = np.linspace(t_i, t_f, n)  # time
 delta = (m - k*v*F/4)**2 / (2 * abs(v) * abs(F))  # adiabatic parameter
 phi_s = (math.pi/4
@@ -88,7 +87,7 @@ def Re_E(t):
     Returns:
         float: adiabatic energy
     """
-    Integrand = adia_eng(tp_1 + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(Hc, F))
     return Integrand.real
 
 
@@ -100,7 +99,7 @@ TP *= -4 * (-F) / abs(F)
 
 
 def Im_E_1(t):
-    Integrand = adia_eng(tp_1 + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(Hc, F))
     return Integrand.imag
 
 
@@ -112,7 +111,7 @@ phase_term1 *= (-F) / abs(F)
 
 
 def Im_E_2(t):
-    Integrand = adia_eng(tp_2 + 1j*t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_2 + 1j*t, to_LZ(Hc, F))
     return Integrand.imag
 
 
@@ -124,7 +123,7 @@ phase_term2 *= (-F) / abs(F)
 
 
 def E_3(t):
-    Integrand = adia_eng(t, Hc, ut=True, F=F)
+    Integrand = adia_eng(t, to_LZ(Hc, F))
     return Integrand.real
 
 
@@ -141,25 +140,7 @@ def func_psi(t, var):
 
 
 # 各時間における波動関数を算出
-var_init_tmp = eig_vec(t_i, Hc, "upper").tolist()  # initial state
-var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
-            var_init_tmp[1].real, var_init_tmp[1].imag]
-var_list = solve_ivp(func_psi, [t_i, t_f], var_init, method="LSODA",
-                     t_eval=t_eval, rtol=1e-12, atol=1e-12)
-for i in range(n):
-    a = var_list.y[0][i]  # 波動関数 第1成分 実部
-    b = var_list.y[1][i]  # 波動関数 第1成分 虚部
-    c = var_list.y[2][i]  # 波動関数 第2成分 実部
-    d = var_list.y[3][i]  # 波動関数 第2成分 虚部
-    psi = np.array([[a + b * 1j],
-                    [c + d * 1j]])  # 波動関数
-
-    # 断熱状態に指定
-    q_f = eig_vec(var_list.t[i], Hc, "lower")  # final state
-
-    PA = np.vdot(q_f, psi)  # probability amplitude
-    OP = abs(PA)**2  # ocupation probability
-    OP_list.append(OP)
+OP_array = calculate_occupation_probability(Hc, t_i, t_f, n)
 
 # 終時間における状態0の占有確率
 phase = phase_term2 - phase_term1 + phase_term3
@@ -178,7 +159,7 @@ dic = {
     'P_TP': math.exp(TP),
     'P_f_adiabatic': P_f_adia,
     'P_f_HS1': P_f_HS,
-    'P_f_num': OP_list[-1],
+    'P_f_num': OP_array[-1],
 }
 ll = max([len(mm) for mm in dic.keys()])
 for mm, ii in dic.items():
@@ -192,7 +173,7 @@ P_f_adia += t_eval*0
 P_f_HS += t_eval*0
 P_TP += t_eval*0
 P_TLZ += t_eval*0
-plt.plot(t_eval, OP_list, label="numerical", color="tab:blue")
+plt.plot(t_eval, OP_array, label="numerical", color="tab:blue")
 # plt.plot(t_eval, P_f_adia, label="adiabatic(24)")
 plt.plot(t_eval, P_f_HS, label="heuristic", color="tab:green")
 plt.plot(t_eval, P_TLZ, label="first transition", color="tab:red")

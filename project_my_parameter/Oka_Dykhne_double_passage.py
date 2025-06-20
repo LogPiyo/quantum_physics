@@ -36,7 +36,6 @@ tp_2 = math.pi / (2 * abs(F))  # second transition time
 
 # constant
 h = 1  # Dirac constant (should not change, initial value: 1)
-TP_list = []  # transition probability
 n = 500  # step
 OP_list = []  # ocupation probability
 t_eval = np.linspace(t_i, t_f, n)  # time
