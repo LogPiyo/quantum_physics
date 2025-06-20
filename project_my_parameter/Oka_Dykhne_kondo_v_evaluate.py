@@ -20,7 +20,6 @@ D_z = 0.1  # minimal energy gap
 D_y_values = np.linspace(-1, 1, 100)  # twist strength
 
 # constant
-h = 1  # Dirac constant (should not change)
 F = -1  # sweep speed (should not change)(時間反転させないため)
 TP_list = []  # transition probability
 
@@ -92,5 +91,3 @@ plt.plot(D_y_values, TLZ_theoretical(eps_0, F, D_z, (4 * D_y_values / eps_0**2))
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
-
-# %%

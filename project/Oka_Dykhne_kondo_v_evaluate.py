@@ -20,8 +20,8 @@ m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
 # constant
-h = 1  # Dirac constant (should not change)
 F = -1  # sweep speed (should not change)(時間反転させないため)
+
 TP_list = []  # transition probability
 
 

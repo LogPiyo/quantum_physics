@@ -22,7 +22,6 @@ D_z = 4  # minimal energy gap
 D_y_values = np.linspace(-90, 90, 50)  # twist strength
 
 # constant
-h = 1  # Dirac constant (should not change)
 F = -1  # sweep speed (should not change)(時間反転させないため)
 TP_list = []  # transition probability
 
@@ -98,5 +97,3 @@ plt.title(rf"$\Delta_Z = {D_z}, \omega = {-F}$")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
-
-# %%

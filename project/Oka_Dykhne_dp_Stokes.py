@@ -29,8 +29,8 @@ tp_1 = -math.pi / (2 * abs(F))  # first transition time
 tp_2 = math.pi / (2 * abs(F))  # second transition time
 
 # constant
-h = 1  # Dirac constant (should not change, initial value: 1)
 n = 500  # step
+
 OP_list = []  # ocupation probability
 Stokes_val = []
 Stokes_val_thr_TLZ = []
@@ -177,9 +177,6 @@ for v in v_val:
     Stokes_val_thr_LZ.append(Stokes_phase(v))
 
 k = k_tmp
-
-# %%[markdown]
-# グラフの設定
 
 # %%
 plt.plot(v_val, Stokes_val, linestyle="None", marker="x", label=rf"$\Delta_y = {"{:.0f}".format(v**2 * k / 4)}$")

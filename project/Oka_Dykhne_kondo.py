@@ -26,9 +26,6 @@ m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
 F_values = np.linspace(-2, 2, 100)  # sweep speed
-
-# constant
-h = 1  # Dirac constant (should not change)
 TP_list = []  # transition probability
 
 

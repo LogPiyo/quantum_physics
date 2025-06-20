@@ -22,8 +22,8 @@ m = 4  # minimal energy gap
 k = 0.1  # geodesic curvature
 
 # constant
-h = 1  # Dirac constant (should not change)
 F = -1  # sweep speed (should not change)(時間反転させないため)
+
 TP_list = []  # transition probability
 
 
@@ -101,5 +101,3 @@ plt.title(rf"$\Delta_Z = {m}, \omega = {-F}$")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
-
-# %%

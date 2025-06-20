@@ -13,7 +13,6 @@ from my_module.function import q
 from my_module.calculator import calculate_occupation_probability
 
 import numpy.typing as npt
-from typing import Final
 
 # parameter
 v: float = 1  # energy slope
@@ -27,10 +26,6 @@ tt_1: float = -math.pi / (2*abs(F))  # first transition time
 tt_2: float = math.pi / (2*abs(F))  # second transition time
 n: int = 100  # step
 t_eval: npt.NDArray = np.linspace(t_i, t_f, n)  # time
-
-# constant
-h: Final[float] = 1  # Dirac constant (should not change)
-OP_list: list[float] = []  # occupation probability
 
 
 def H(t: float, component: str, real: bool = True) -> float:

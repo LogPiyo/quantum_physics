@@ -23,7 +23,6 @@ F = 1  # sweep speed
 tt = 0  # transition time
 
 # constant
-h = 1  # Dirac constant
 TP_list = []  # transition probability
 
 

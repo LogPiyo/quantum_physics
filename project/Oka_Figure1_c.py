@@ -16,8 +16,6 @@ v = 1  # energy slope
 m = 0.1  # minimal energy gap
 k = 1  # geodesic curvature
 
-h = 1  # Dirac constant
-
 n = 50  # step
 t_i = -10  # initial time
 t_f = 10  # final time

@@ -5,7 +5,6 @@
 # %%
 import _pathmagic # noqa
 
-from typing import Final
 import numpy.typing as npt
 
 import numpy as np
@@ -18,8 +17,6 @@ from my_module.function import TLZ_theoretical, q, func_psi_module, eig_vec
 eps_0: float = 1  # energy slope
 D_z: float = 0.1  # minimal energy gap
 D_y: float = 0.25  # twist strength
-
-h: Final[float] = 1  # Dirac constant
 
 n: int = 50  # step
 t_i: float = -10  # initial time

@@ -36,7 +36,6 @@ tp_1 = -math.pi / (2 * abs(F))  # first transition time
 tp_2 = math.pi / (2 * abs(F))  # second transition time
 
 # constant
-h = 1  # Dirac constant (should not change, initial value: 1)
 n = 500  # step
 t_eval = np.linspace(t_i, t_f, n)  # time
 delta = (m - k*v*F/4)**2 / (2 * abs(v) * abs(F))  # adiabatic parameter
@@ -176,5 +175,3 @@ plt.ylabel(r"occupation probability $P$")
 plt.title(rf"$\varepsilon_0 = {v}, \Delta_z = {m}, \Delta_y = {v**2 * k / 4:.0f}, \omega = {-F}$")
 plt.legend()
 plt.show()
-
-# %%
