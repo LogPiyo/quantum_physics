@@ -13,7 +13,7 @@ import cmath
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, adia_eng, to_LZ
+from my_module.function import q, adia_eng, to_LZ, TLZ_theoretical
 from scipy.integrate import quad
 
 # parameter
@@ -27,12 +27,7 @@ F = -1  # sweep speed (should not change)(時間反転させないため)
 TP_list = []  # transition probability
 
 
-def TLZ_theoretical(D_y):
-    TLZ = -math.pi * (D_z - (4 * D_y / eps_0**2) * eps_0 * F / 4)**2 / (abs(eps_0) * abs(F))
-    return np.exp(TLZ)
-
-
-def Hc(t, component, real=False):
+def H(t, component):
     """
     define complex Hamiltonian and its derivative
     with respect to parameter sweep
@@ -57,10 +52,7 @@ def Hc(t, component, real=False):
     H['y_dot'] = -0.125 * (4 * D_y / eps_0**2) * eps_0**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
     H['z_dot'] = D_z * cmath.cos(q(t, F))
 
-    if real:
-        return H[component].real
-    else:
-        return H[component]
+    return H[component]
 
 
 def Re_E(t):
@@ -73,7 +65,7 @@ def Re_E(t):
     Returns:
         float: real part of adiabatic energy (unitary transformed)
     """
-    Integrand = adia_eng(tp + 1j*t, to_LZ(Hc, F))
+    Integrand = adia_eng(tp + 1j*t, to_LZ(H, F))
     return Integrand.real
 
 
@@ -99,7 +91,7 @@ for D_y in D_y_values:
 # %%
 # v_values = v_values[abs(v_values) >= 0.07]  # avoid Integration Warning
 plt.plot(D_y_values, TP_list, label="numerical", color="tab:blue", linestyle="None", marker="x")
-plt.plot(D_y_values, TLZ_theoretical(D_y_values), label="theoretical", color="tab:red")
+plt.plot(D_y_values, TLZ_theoretical(eps_0, -F, D_z, (4 * D_y_values / eps_0**2)), label="theoretical", color="tab:red")
 plt.xlabel(r"energy slope $\epsilon_0$")
 plt.ylabel(r"transition probability $P$")
 plt.title(rf"$\Delta_Z = {D_z}, \omega = {-F}$")

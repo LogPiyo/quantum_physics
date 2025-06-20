@@ -11,8 +11,9 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, adia_eng, func_psi_module, adia_param, eig_vec
-from scipy.integrate import solve_ivp, quad
+from my_module.function import q, adia_eng, adia_param, to_LZ
+from my_module.calculator import calculate_occupation_probability
+from scipy.integrate import quad
 
 
 # parameter
@@ -37,7 +38,7 @@ Stokes_val_thr_LZ = []
 t_eval = np.linspace(t_i, t_f, n)  # time
 
 
-def Hc(t, component, real=False):
+def Hc(t, component):
     """
     Hamiltonianの設定(複素数対応)
 
@@ -57,10 +58,7 @@ def Hc(t, component, real=False):
     H['y_dot'] = -0.125 * k * v**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F))
     H['z_dot'] = m * cmath.cos(q(t, F))
 
-    if real:
-        return H[component].real
-    else:
-        return H[component]
+    return H[component]
 
 
 def Re_E(t):
@@ -73,27 +71,23 @@ def Re_E(t):
     Returns:
         float: adiabatic energy
     """
-    Integrand = adia_eng(tp_1 + 1j * t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_1 + 1j * t, to_LZ(Hc, F))
     return Integrand.real
 
 
 def Im_E_1(t):
-    Integrand = adia_eng(tp_1 + 1j * t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_1 + 1j * t, to_LZ(Hc, F))
     return Integrand.imag
 
 
 def Im_E_2(t):
-    Integrand = adia_eng(tp_2 + 1j * t, Hc, ut=True, F=F)
+    Integrand = adia_eng(tp_2 + 1j * t, to_LZ(Hc, F))
     return Integrand.imag
 
 
 def E_3(t):
-    Integrand = adia_eng(t, Hc, ut=True, F=F)
+    Integrand = adia_eng(t, to_LZ(Hc, F))
     return Integrand.real
-
-
-def func_psi(t, var):
-    return func_psi_module(t, Hc, var)
 
 
 def Stokes_phase(v):
@@ -151,25 +145,8 @@ for initial_v in [-5, 5]:
             phase_term3, _ = quad(E_3, ll_E_3, ul_E_3)
             phase_term3 *= (-F) / abs(F)
 
-            var_init_tmp = eig_vec(t_i, Hc, "upper").tolist()  # initial state
-            var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
-                        var_init_tmp[1].real, var_init_tmp[1].imag]
-            var_list = solve_ivp(func_psi, [t_i, t_f], var_init, method="LSODA",
-                                 t_eval=t_eval, rtol=1e-12, atol=1e-12)
-            for i in range(n):
-                a = var_list.y[0][i]  # 波動関数 第1成分 実部
-                b = var_list.y[1][i]  # 波動関数 第1成分 虚部
-                c = var_list.y[2][i]  # 波動関数 第2成分 実部
-                d = var_list.y[3][i]  # 波動関数 第2成分 虚部
-                psi = np.array([[a + b*1j],
-                                [c + d*1j]])  # 波動関数
-
-                # 断熱状態に指定
-                q_f = eig_vec(var_list.t[i], Hc, "lower")  # final state
-
-                PA = np.vdot(q_f, psi)  # probability amplitude
-                OP = abs(PA)**2  # ocupation probability
-                OP_list.append(OP)
+            OP_array = calculate_occupation_probability(Hc, t_i, t_f, n)
+            OP_list += OP_array.tolist()
 
             # 終時間における状態0の占有確率
             phase = phase_term2 - phase_term1 + phase_term3
@@ -214,8 +191,3 @@ plt.title(rf"$\Delta_z = {m}, \omega = {-F}$")
 plt.legend()
 plt.ylim(-0.1, 1.1)
 plt.show()
-
-# %%
-# Sample
-# v_val = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, -5.0, -10.0, -15.0, -20.0, -25.0, -30.0, -35.0, -40.0, -45.0, -50.0, -55.0, -60.0, -65.0, -70.0, -75.0, -80.0, -85.0, -90.0, -95.0, -100.0]
-# Stokes_val = [0.20287276377942887, 0.21817888622840845, 0.160015620922286, 0.15083194745289824, 0.23960745765697986, 0.2610360290855513, 0.28858704949371455, 0.31001562092228596, 0.343689090310041, 0.33450541684065327, 0.3314441923508573, 0.4140972535753471, 0.3191992943916736, 0.3957299066365716, 0.36817888622840833, 0.3651176617386124, 0.40491358010595935, 0.4691992943916736, 0.44164827398351036, 0.4508319474528981, 0.20287276377942887, 0.3011486258483944, 0.3477003499863255, 0.44597621205529103, 0.5545969017104635, 0.6218382810208083, 0.6787348327449463, 0.7356313844690843, 0.7821831086070153, 0.8183900051587395, 0.8649417292966706, 0.8908037982621878, 0.9477003499863257, 0.9218382810208084, 0.8752865568828774, 1.0252865568828773, 0.9166658672277048, 0.9942520741242565, 0.9683900051587393, 0.9735624189518428]

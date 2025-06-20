@@ -13,7 +13,7 @@ import cmath
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, adia_eng, to_LZ
+from my_module.function import q, adia_eng, to_LZ, TLZ_theoretical
 from scipy.integrate import quad
 
 # parameter
@@ -25,11 +25,6 @@ k = 0.1  # geodesic curvature
 h = 1  # Dirac constant (should not change)
 F = -1  # sweep speed (should not change)(時間反転させないため)
 TP_list = []  # transition probability
-
-
-def TLZ_theoretical(v):
-    TLZ = -math.pi * (m - k * v * F / 4)**2 / (abs(v) * abs(F))
-    return np.exp(TLZ)
 
 
 def Hc(t, component, real=False):
@@ -99,7 +94,7 @@ for v in v_values:
 # %%
 # v_values = v_values[abs(v_values) >= 0.07]  # avoid Integration Warning
 plt.plot(v_values, TP_list, label="numerical", color="tab:blue", linestyle="None", marker="x")
-plt.plot(v_values, TLZ_theoretical(v_values), label="theoretical", color="tab:red")
+plt.plot(v_values, TLZ_theoretical(v_values, -F, m, k), label="theoretical", color="tab:red")
 plt.xlabel(r"energy slope $\epsilon_0$")
 plt.ylabel(r"transition probability $P$")
 plt.title(rf"$\Delta_Z = {m}, \omega = {-F}$")
