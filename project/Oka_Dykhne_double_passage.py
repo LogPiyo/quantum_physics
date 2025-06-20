@@ -20,7 +20,7 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, adia_eng, func_psi_module, to_LZ
+from my_module.function import q, adia_eng, to_LZ
 from my_module.calculator import calculate_occupation_probability
 from scipy.integrate import quad
 
@@ -51,7 +51,7 @@ zero_approx = abs(m - k*(v)*F/4) / (abs(v) * (-F))
 # 被積分関数の符号と合わせる
 
 
-def Hc(t, component, real=False):
+def H(t, component):
     """
     Complex Hamiltonian
 
@@ -62,19 +62,16 @@ def Hc(t, component, real=False):
     Returns:
         float: 時刻tにおけるcomponentで指定した成分を返す。
     """
-    H = {}
+    H = {
+        'x': -v * cmath.cos(q(t, F)),
+        'y': -0.125 * k * v**2 * cmath.sin(2 * q(t, F))**2,
+        'z': m * cmath.sin(q(t, F)),
+        'x_dot': v * cmath.sin(q(t, F)),
+        'y_dot': -0.125 * k * v**2 * 4 * cmath.sin(2 * q(t, F)) * cmath.cos(2 * q(t, F)),
+        'z_dot': m * cmath.cos(q(t, F))
+    }
 
-    H['x'] = -v * cmath.cos(q(t, F))
-    H['y'] = -0.125 * k * v**2 * cmath.sin(2*q(t, F))**2
-    H['z'] = m * cmath.sin(q(t, F))
-    H['x_dot'] = v * cmath.sin(q(t, F))
-    H['y_dot'] = -0.125 * k * v**2 * 4 * cmath.sin(2*q(t, F)) * cmath.cos(2*q(t, F))
-    H['z_dot'] = m * cmath.cos(q(t, F))
-
-    if real:
-        return H[component].real
-    else:
-        return H[component]
+    return H[component]
 
 
 def Re_E(t):
@@ -87,7 +84,7 @@ def Re_E(t):
     Returns:
         float: adiabatic energy
     """
-    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(Hc, F))
+    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(H, F))
     return Integrand.real
 
 
@@ -99,7 +96,7 @@ TP *= -4 * (-F) / abs(F)
 
 
 def Im_E_1(t):
-    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(Hc, F))
+    Integrand = adia_eng(tp_1 + 1j*t, to_LZ(H, F))
     return Integrand.imag
 
 
@@ -111,7 +108,7 @@ phase_term1 *= (-F) / abs(F)
 
 
 def Im_E_2(t):
-    Integrand = adia_eng(tp_2 + 1j*t, to_LZ(Hc, F))
+    Integrand = adia_eng(tp_2 + 1j*t, to_LZ(H, F))
     return Integrand.imag
 
 
@@ -123,7 +120,7 @@ phase_term2 *= (-F) / abs(F)
 
 
 def E_3(t):
-    Integrand = adia_eng(t, to_LZ(Hc, F))
+    Integrand = adia_eng(t, to_LZ(H, F))
     return Integrand.real
 
 
@@ -134,13 +131,8 @@ phase_term3, _ = quad(E_3, ll_E_3, ul_E_3)
 phase_term3 *= (-F) / abs(F)
 print("dynamical phase: ", phase_term3 % (2*math.pi))
 
-
-def func_psi(t, var):
-    return func_psi_module(t, Hc, var)
-
-
 # 各時間における波動関数を算出
-OP_array = calculate_occupation_probability(Hc, t_i, t_f, n)
+OP_array = calculate_occupation_probability(H, t_i, t_f, n)
 
 # 終時間における状態0の占有確率
 phase = phase_term2 - phase_term1 + phase_term3
