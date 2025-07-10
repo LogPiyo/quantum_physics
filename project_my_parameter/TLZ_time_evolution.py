@@ -9,8 +9,9 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from my_module.function import q, eig_vec, func_psi_module
-from scipy.integrate import solve_ivp
+from my_module.function import q
+from my_module.calculator import calculate_occupation_probability
+from numpy.typing import NDArray
 
 # parameter
 eps_0 = 1  # energy slope
@@ -27,7 +28,6 @@ t_eval = np.linspace(t_i, t_f, n)  # time
 
 # constant
 h = 1  # Dirac constant (should not change)
-OP_list = []  # occupation probability
 
 
 def H(t, component, real=True):
@@ -53,28 +53,7 @@ def H(t, component, real=True):
     return H[component]
 
 
-def func_psi(t, var):
-    return func_psi_module(t, H, var)
-
-
-# 各Fにおけるpsiの時間発展を計算し，t_fにおけるpsiとFをvar_fに追加する。
-var_init_tmp = eig_vec(t_i, H, "upper").tolist()
-var_init = [var_init_tmp[0].real, var_init_tmp[0].imag,
-            var_init_tmp[1].real, var_init_tmp[1].imag]
-var_list = solve_ivp(func_psi, [t_i, t_f], var_init, method="LSODA",
-                     t_eval=t_eval, rtol=1e-12, atol=1e-12)
-
-for i in range(n):
-    a = var_list.y[0][i]
-    b = var_list.y[1][i]
-    c = var_list.y[2][i]
-    d = var_list.y[3][i]
-    psi = np.array([[a+b*1j],
-                    [c+d*1j]])  # state vector
-    q_f = eig_vec(var_list.t[i], H, "lower")  # final state
-    dot = np.vdot(q_f, psi)
-    OP = abs(dot)**2  # occupation probability
-    OP_list.append(OP)
+OP_list: NDArray = calculate_occupation_probability(H, t_i, t_f, n)
 
 TLZ = -math.pi * (D_z + (4 * D_y / eps_0**2)*eps_0*F/4)**2 / (abs(eps_0) * abs(F))
 P_TLZ = math.exp(TLZ) + t_eval*0  # theoretical
