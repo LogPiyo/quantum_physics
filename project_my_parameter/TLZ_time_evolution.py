@@ -21,13 +21,8 @@ F = -1  # parameter sweep (should not change)
 t_i = -math.pi / abs(F)  # initial time
 t_f = math.pi / abs(F)  # final time
 
-tt_1 = -math.pi / (2*abs(F))  # first transition time
-tt_2 = math.pi / (2*abs(F))  # second transition time
 n = 100  # step
 t_eval = np.linspace(t_i, t_f, n)  # time
-
-# constant
-h = 1  # Dirac constant (should not change)
 
 
 def H(t, component, real=True):
